@@ -17,6 +17,7 @@ import {
   SimpleGrid,
   useDisclosure,
   Label,
+  useToast
 } from '@chakra-ui/react';
 import { FiSearch } from 'react-icons/fi';
 import { useGetAllCourses } from '../../services/query/courses';
@@ -26,7 +27,7 @@ import { useFormik } from 'formik';
 import { useAddCourse } from '../../services/query/courses';
 const Courses = () => {
   const [search, setSearch] = useState('');
- 
+  const toast = useToast()
   const initValues ={
     course_name: '',
     course_id: '',
@@ -51,6 +52,14 @@ const Courses = () => {
       formik.resetForm();
       onClose()
       refetchSections();
+      toast({
+        title: 'Successful',
+        description: 'Your course has been added',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
     },
     onError:(err)=>{
       console.log(err)

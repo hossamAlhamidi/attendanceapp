@@ -1,4 +1,4 @@
-import React, { Fragment ,useRef} from 'react'
+import React, { Fragment, useRef } from 'react';
 import {
   Box,
   Input,
@@ -24,13 +24,34 @@ import {
   Td,
   TableCaption,
   TableContainer,
-  useToast
+  useToast,
 } from '@chakra-ui/react';
-
+import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
+import { useGetAllSectionStudents } from '../../services/query/sections';
+import { useParams,useNavigate } from 'react-router-dom';
 import { isEmpty } from '../../components/ModalTemplate';
 const SectionInner = () => {
+  const params = useParams();
+  const navigate = useNavigate();
+  const { id } = params;
   const inputFile = useRef(null);
-  const toast = useToast()
+  const toast = useToast();
+
+  // get list of students
+  const {
+    data: sectionStudents,
+    isLoading: isLoadingSectionStudents,
+    refetch,
+  } = useGetAllSectionStudents(id, {
+    onSuccess: (res) => {
+     
+    },
+    onError: (err) => {
+      console.log(err, 'err');
+    },
+  });
+
+ 
   const onButtonClick = () => {
     inputFile.current.click();
   };
@@ -59,8 +80,6 @@ const SectionInner = () => {
       });
       return;
     }
-
-    
 
     const reader = new FileReader();
 
@@ -93,67 +112,79 @@ const SectionInner = () => {
       // addModal.onOpen();
     };
     reader.readAsText(e.target.files[0]);
-  
+
     // Clear the input so if we select the same file again it works
     e.target.value = '';
     return;
   };
 
-
   return (
     <Fragment>
-      <Flex justifyContent={'flex-end'}>
-      <input
+      <Flex justifyContent={'space-between'} alignItems={'center'}>
+      <IoIosArrowBack
+            size={24}
+            cursor="pointer"
+            onClick={() => navigate(-1)}
+          />
+        <input
           ref={inputFile}
           onChange={(e) => handleFileSelect(e)}
-          type="file"
-          style={{ display: "none" }}
+          type='file'
+          style={{ display: 'none' }}
           // multiple={false}
         />
         {/* <Text m={'10px'}>Upload CSV file to add Students</Text> */}
-      <Button onClick={onButtonClick}>Add CSV file to add students </Button>
+        <Button onClick={onButtonClick}>Add CSV file to add students </Button>
       </Flex>
 
       <Box my={'20px'}>
-      <TableContainer>
-  <Table variant='simple'>
-    <TableCaption>Imperial to metric conversion factors</TableCaption>
-    <Thead>
-      <Tr>
-        <Th>To convert</Th>
-        <Th>into</Th>
-        <Th isNumeric>multiply by</Th>
-      </Tr>
-    </Thead>
-    <Tbody>
-      <Tr>
-        <Td>inches</Td>
-        <Td>millimetres (mm)</Td>
-        <Td isNumeric>25.4</Td>
-      </Tr>
-      <Tr>
-        <Td>feet</Td>
-        <Td>centimetres (cm)</Td>
-        <Td isNumeric>30.48</Td>
-      </Tr>
-      <Tr>
-        <Td>yards</Td>
-        <Td>metres (m)</Td>
-        <Td isNumeric>0.91444</Td>
-      </Tr>
-    </Tbody>
-    <Tfoot>
-      <Tr>
-        <Th>To convert</Th>
-        <Th>into</Th>
-        <Th isNumeric>multiply by</Th>
-      </Tr>
-    </Tfoot>
-  </Table>
-</TableContainer>
+         {
+        <TableContainer>
+
+          <Table variant='simple'>
+            <TableCaption>List of all students</TableCaption>
+            <Thead>
+              <Tr>
+                <Th> </Th>
+                <Th> id</Th>
+                <Th> Name</Th>
+                <Th> email</Th>
+                <Th isNumeric>num of absence</Th>
+                <Th isNumeric>absence percentage</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {
+                !isLoadingSectionStudents&&!isEmpty(sectionStudents)&&sectionStudents.map((student,index)=>{
+                  return (
+                    <Tr key={student.student_id}>
+                     <Td>{index+1}</Td>
+                    <Td>{student.student_id}</Td>
+                    <Td>{student.student_name}</Td>
+                    <Td>{student.email}</Td>
+                    <Td isNumeric>{student.number_of_absence}</Td>
+                    <Td isNumeric>{student.absence_percentage}</Td>
+                  </Tr>
+                  )
+                })
+              }
+             
+             
+            </Tbody>
+            {/* <Tfoot>
+              <Tr>
+                <Th>To convert</Th>
+                <Th>into</Th>
+                <Th isNumeric>multiply by</Th>
+              </Tr>
+            </Tfoot> */}
+          </Table>
+        </TableContainer>
+
+          }
       </Box>
     </Fragment>
-  )
-}
+  );
+};
 
-export default SectionInner
+export default SectionInner;
