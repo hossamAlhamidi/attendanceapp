@@ -6,6 +6,8 @@ export const PUBLIC_PATHS = {
   };
   
    export const PRIVATE_PATHS = {
-    SECTIONS:'/sections'
+    SECTIONS:'/sections',
+    COURSES:'/courses',
+    SECTIONS_INNER : '/sections/:id'
   };
   

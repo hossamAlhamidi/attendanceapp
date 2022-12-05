@@ -1,5 +1,5 @@
 import axios from 'axios'
-export const baseUrl = 'localhost:8000/api'
+export const baseUrl = 'http://localhost:8000/api/'
 
 const axiosInstance = axios.create({
     baseURL: baseUrl,
@@ -18,8 +18,8 @@ const axiosInstance = axios.create({
     // }
   
     // get the access token from LS
-    const { access } = JSON.parse(localStorage.getItem('user'));
-    request.headers.Authorization = `Bearer ${access}` || '';
+    // const { access } = JSON.parse(localStorage.getItem('user'));
+    request.headers.Authorization = `Bearer`;
     return request;
   };
   
@@ -32,19 +32,13 @@ const axiosInstance = axios.create({
   };
   
   const onResponseError = async (error) => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    // const user = JSON.parse(localStorage.getItem('user'));
   
-    const statusCode = error.response.status;
+    // const statusCode = error.response.status;
     // const originalRequest: any = error.config;
-    if ((statusCode === 403 || statusCode === 401) && user) {
-    //   let toastID = 'permisison-error';
-    //   if (!toast.isActive(toastID)) {
-    //     console.log('axios')
-     
-    //   }
-      // window.localStorage.removeItem('user');
-      // window.location.href = '/login';
-    }
+    // if ((statusCode === 403 || statusCode === 401) && user) {
+   
+    // }
     return Promise.reject(error);
   };
   

@@ -34,14 +34,8 @@ import {
         icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
         
       },
-      // {
-      //   id: 2,
-      //   name: 'Response',
-      //   path: '/response',
-      //   icon: <BiServer style={{ marginRight: 8, fontSize: '24px' }} />,
-      // },
       {
-        id: 3,
+        id: 2,
         name: 'Courses',
         // path: '/search',
         path: '/courses',
@@ -49,27 +43,20 @@ import {
         
       },
       {
-        id: 4,
+        id: 3,
         name: 'Students',
         path: '/students',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
         
       },
-    //   {
-    //     id: 4,
-    //     name: 'Detection Rules',
-    //     path: '/detection-rules',
-    //     icon: <GiBinoculars style={{ marginRight: 8, fontSize: '24px' }} />,
-       
-    //   },
+      {
+        id: 3,
+        name: 'Instructors',
+        path: '/instructors',
+        icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
+        
+      },
    
-      // {
-      //   id: 4,
-      //   name: 'Settings',
-      //   path: '/settings',
-      //   icon: <BsGear style={{ marginRight: 8, fontSize: '24px' }} />,
-      //   isVisible: true,
-      // },
     ];
   
     const { toggleColorMode } = useColorMode();
