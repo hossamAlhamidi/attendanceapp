@@ -88,7 +88,7 @@ import {
         overflowY='hidden'
         position={'fixed'}
         boxShadow='md'
-        bgColor={colorMode === 'light' ? '#00024C' : '#1E1F23'}
+        bgColor={colorMode === 'light' ? '#263159' : '#1E1F23'}
         // color={colorMode === "light" ? "#00024C" : "#1E1F23"}
         zIndex={isMobile ? '999' : ''}
         w={showSideNav ? '270px' : isMobile ? '0px' : '65px'}
@@ -153,7 +153,7 @@ import {
             sx={{
               '::-webkit-scrollbar': {
                 width: '10px',
-                backgroundColor: colorMode === 'light' ? '#00024C' : '#1E1F23',
+                backgroundColor: colorMode === 'light' ? '#263159' : '#1E1F23',
               },
               '::-webkit-scrollbar-thumb': {
                 background: colorMode === 'light' ? '#DBE2EF' : '#888',
@@ -173,7 +173,7 @@ import {
                         : { ...activeStyle, backgroundColor: '', width: '100%' }
                     }
                   >
-                    {item.icon}
+                    {/* {item.icon} */}
                     {showSideNav && item.name}
                   </NavLink>
                 )

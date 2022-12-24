@@ -22,7 +22,7 @@ const CardStructure = ({data}) => {
   // const {id} = params
   return (
     <SimpleGrid minChildWidth='300px' spacing='40px' mt={'2em'}>
-        {  data.map((element,index)=>{
+        {  data?.map((element,index)=>{
                 return (
                     <Card key={element?.section_id}>       
                     <CardHeader>
@@ -34,7 +34,7 @@ const CardStructure = ({data}) => {
                             <CardBody>
                               <Text>Instructor Name: {element?.instructor_name}</Text>
                               <Text>classroom: {element?.classroom}</Text>
-                              <Text>time: {element?.time}</Text>
+                              {/* <Text>time: {element?.time}</Text> */}
                             </CardBody>
                             <CardFooter>
                               <Link to={`/sections/${element.section_id}`}><Button>View here</Button></Link>

@@ -30,6 +30,9 @@ import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
 import { useGetAllSectionStudents } from '../../services/query/sections';
 import { useParams,useNavigate } from 'react-router-dom';
 import { isEmpty } from '../../components/ModalTemplate';
+import TableTemplate from '../../components/Table';
+import { studentsSectionTableHeader } from '../../data/studentsSection.headers';
+import EmptyState from '../../components/EmptyState';
 const SectionInner = () => {
   const params = useParams();
   const navigate = useNavigate();
@@ -138,7 +141,14 @@ const SectionInner = () => {
       </Flex>
 
       <Box my={'20px'}>
-         {
+        <TableTemplate
+        columns={studentsSectionTableHeader}
+        data={sectionStudents}
+        actions={[]}
+        isLoading={isLoadingSectionStudents}
+        emptyState={<EmptyState message={'No Students in this section yet'}/>}
+        />
+         {/* {
         <TableContainer>
 
           <Table variant='simple'>
@@ -171,17 +181,11 @@ const SectionInner = () => {
              
              
             </Tbody>
-            {/* <Tfoot>
-              <Tr>
-                <Th>To convert</Th>
-                <Th>into</Th>
-                <Th isNumeric>multiply by</Th>
-              </Tr>
-            </Tfoot> */}
+         
           </Table>
         </TableContainer>
 
-          }
+          } */}
       </Box>
     </Fragment>
   );
