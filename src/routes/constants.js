@@ -11,7 +11,8 @@ export const PUBLIC_PATHS = {
     SECTIONS_INNER : '/sections/:id',
     STUDENTS:'/students',
     STUDENT:"/students/:id",
-    ADD_SECTION:'/addSection'
+    ADD_SECTION:'/addSection',
+    INSTRUCTORS:"/instructors"
     
   };
   

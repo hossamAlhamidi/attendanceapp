@@ -7,3 +7,6 @@ export const UPDATE_STUDENT_URL =`students/`;
 export const GET_STUDENT_BY_ID_URL =(id)=> `students/${id}`
 export const ADD_SECTION = 'sections/'
 export const GET_INSTRUCTORS = 'instructors/'
+export const ADD_INSTRUCTOR = 'instructor/register/'
+export const ADD_ALL_STUDENTS_TO_SECTION = 'students/sections/all'
+export const ADD_STUDENT_TO_SECTION = 'students/sections'

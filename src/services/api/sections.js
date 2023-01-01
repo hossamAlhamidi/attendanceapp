@@ -1,7 +1,9 @@
 import { 
 GET_ALL_SECTIONS, 
 GET_ALL_SECTION_STUDENTS_URL,
-ADD_SECTION
+ADD_SECTION,
+ADD_ALL_STUDENTS_TO_SECTION,
+ADD_STUDENT_TO_SECTION
 } from '../apiUrl';
 import axiosInstance, { baseUrl } from '../config/axiosInstance';
 import axios from 'axios';
@@ -21,4 +23,13 @@ export const addSection = async (body)=>{
  const res = await axiosInstance.post(baseUrl+ADD_SECTION,body)
 
  return res.data
+}
+export const addStudentToSection = async (body)=>{
+  const res = await axiosInstance.post(baseUrl+ADD_STUDENT_TO_SECTION,body)
+ 
+  return res.data
+ }
+export const addAllStudentsToSection = async(body)=>{
+  const res = await axiosInstance.post(baseUrl+ADD_ALL_STUDENTS_TO_SECTION,body)
+  return res.body;
 }

@@ -4,7 +4,7 @@
  import { Navigate } from 'react-router-dom';
 //  import { StudentInfo } from '../pages/Students/StudentInfo';
 const {LOGIN,SIGNUP} = PUBLIC_PATHS;
-const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION} = PRIVATE_PATHS
+const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION,INSTRUCTORS} = PRIVATE_PATHS
   const Sections = WithSuspense(
     lazy(() => import('../pages/sections/index'))
   );
@@ -19,6 +19,9 @@ const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION} = PRIVATE_P
 
   const Courses = WithSuspense(
     lazy(()=>import('../pages/courses/Courses'))
+  )
+  const Instructors = WithSuspense(
+    lazy(()=>import('../pages/instructors/index'))
   )
   const Login = WithSuspense(
     lazy(()=>import('../pages/Login'))
@@ -44,6 +47,7 @@ const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION} = PRIVATE_P
   export const PRIVATE_ROUTES= [
     { path: SECTIONS, element: <Sections /> },
     { path: COURSES, element: <Courses /> },
+    { path: INSTRUCTORS, element: <Instructors /> },
     { path: SECTIONS_INNER, element: <SectionInner /> },
     { path: ADD_SECTION, element: <AddSection /> },
     { path: STUDENTS, element: <Students /> },

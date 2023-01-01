@@ -8,6 +8,10 @@ export const sectionTableHeader = [
       accessor: 'course_id',
     },
     {
+        label: 'Course Name',
+        accessor: 'course_name',
+      },
+    {
       label: 'Instructor',
       accessor: 'instructor_name',
     },

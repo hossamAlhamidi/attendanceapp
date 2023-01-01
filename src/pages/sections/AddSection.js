@@ -116,6 +116,7 @@ const AddSection = () => {
   const initValues = {
     section_id: '',
     course: '',
+    course_name:"",
     instructor_id: '',
     instructor_name:"",
     classroom: '',
@@ -161,6 +162,7 @@ const AddSection = () => {
         let obj = {
             section_id : values.section_id,
             course_id : values.course,
+            course_name:values.course_name,
             instructor_id : values.instructor_id,
             instructor_name:values.instructor_name,
             classroom:values.classroom,

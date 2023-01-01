@@ -46,7 +46,16 @@ export const CustomSelect = ({
             'lab_instructor_name',
            (option ).label
          );
+
+         
     }
+    if(field.name == 'course'){
+      form.setFieldValue(
+           'course_name',
+          (option ).label
+        );
+  }
+    
     setIsTutorial&& setIsTutorial(option.has_tutorial)
     setIsLab&&setIsLab(option.has_lab);
   };

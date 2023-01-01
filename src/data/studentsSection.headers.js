@@ -5,7 +5,7 @@ export const studentsSectionTableHeader = [
       },
       {
         label: 'Name',
-        accessor: 'student_id',
+        accessor: 'student_name',
       },
       {
         label: 'Email',

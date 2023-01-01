@@ -34,8 +34,9 @@ function TableHead({
   return (
     <Thead>
       <Tr>
-        {columns.map((column) => (
+        {columns.map((column,i) => (
           <Th
+            key={i}
             {...headerStyleProps}
             textAlign={!isEmpty(column?.textAlign) ? column?.textAlign : 'left'}
           >

@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useRef,useState } from 'react';
 import {
   Box,
   Input,
@@ -25,21 +25,34 @@ import {
   TableCaption,
   TableContainer,
   useToast,
+  Icon,
+  useDisclosure
 } from '@chakra-ui/react';
 import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
+import { AiOutlineEye } from 'react-icons/ai';
 import { useGetAllSectionStudents } from '../../services/query/sections';
 import { useParams,useNavigate } from 'react-router-dom';
 import { isEmpty } from '../../components/ModalTemplate';
 import TableTemplate from '../../components/Table';
 import { studentsSectionTableHeader } from '../../data/studentsSection.headers';
 import EmptyState from '../../components/EmptyState';
+import { useAddAllStudentsToSection } from '../../services/query/sections';
+import Prompt from '../../components/Prompt';
+import { useFormik } from 'formik';
+import ModalTemplate from '../../components/ModalTemplate';
+import { useAddStudentToSection } from '../../services/query/sections';
 const SectionInner = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { id } = params;
   const inputFile = useRef(null);
   const toast = useToast();
-
+  const warningPrompt = useDisclosure();
+  const [promptErrMsg , setPromptErrMsg] = useState("")
+  const addStudentModal = useDisclosure();
+  if (isEmpty(id)) {
+    navigate(-1);
+  }
   // get list of students
   const {
     data: sectionStudents,
@@ -54,20 +67,80 @@ const SectionInner = () => {
     },
   });
 
- 
+  // add students from csv
+ const {mutate:addAllStudents,data,isLoading:isLoadingAddAll} = useAddAllStudentsToSection({
+  onSuccess:(res)=>{
+    console.log(res,"res")
+    toast({
+      title: 'Success',
+      description:"All students are added",
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+      position: 'top-right',
+    });
+    refetch()
+  },
+  onError:(err)=>{
+  
+    setPromptErrMsg(err?.response?.data?.message)
+    warningPrompt.onOpen();
+    refetch()
+  }
+ })
+
+  const {mutate:addStudent,isLoading:isLoadingAddStudent} =useAddStudentToSection({
+    onSuccess:(res)=>{
+      toast({
+        title: 'Success',
+        description:"Student is added",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      addStudentModal.onClose()
+      refetch()
+    },
+    onError:(err)=>{
+      toast({
+        title: 'Error',
+        description:err?.response?.data?.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  })
+ const initValues ={
+  student_id: '',
+  section_id: id,
+  
+}
+ const formik = useFormik({
+  initialValues: initValues ,
+  onSubmit: (values) => {
+    console.log(values)
+     addStudent(values);
+   
+    
+    // setInitialValues(initValues)
+  },
+});
+ // read file
   const onButtonClick = () => {
     inputFile.current.click();
   };
-
   const handleFileSelect = (e) => {
     e.preventDefault();
 
     if (!e || !e.target || !e.target.files || e.target.files.length === 0) {
       return;
     }
-
+    let temp = ''
     // Validate the file being uploaded
-    const supportedIndicatorFileExtensions = ['csv'];
+    const supportedIndicatorFileExtensions = ['xls','txt','csv','xlsx'];
     const fileName = inputFile.current?.files?.[0].name;
     const fileExtention =
       fileName?.substring(fileName?.lastIndexOf('.') + 1) || '';
@@ -75,7 +148,7 @@ const SectionInner = () => {
     if (!supportedIndicatorFileExtensions.includes(fileExtention)) {
       toast({
         title: 'Unsupported file type',
-        description: 'Please upload a valid CSV file',
+        description: 'Please upload a valid xls file',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -88,11 +161,11 @@ const SectionInner = () => {
 
     reader.onload = async (e) => {
       const text = e.target?.result || '';
-
+      // setTemp(text)
       // Ensure the file content isn't empty
       if (isEmpty(text)) {
         toast({
-          title: 'Invalid import',
+          title: 'Error',
           description: 'file cannot be empty.',
           status: 'error',
           duration: 5000,
@@ -101,28 +174,45 @@ const SectionInner = () => {
         });
         return;
       }
+      let filtered_text = text.match(/^[0-9];.*/gimu)
+      const arr = filtered_text.map((element)=>{
+          return element.replaceAll(/^[0-9];/g,"")
+      })
+    //  console.log(text,"text")
+      console.log(arr)
+      let temp = arr.map((element,i)=>{
+       return element.split(";")
+      })
 
-      // let importedRuleObj = {
-      //   title:
-      //     typeof text === 'string' ? getIndicatorRuleTitle(text, ruleType) : '',
-      //   indicator_type: ruleType,
-      //   content_rule: text,
-      //   severity: '',
-      // };
+      // let arr_student = []
+      // temp.map((element)=>{
+      //   arr_student.push({
+      //     id:element[0],
+      //     name:element[1]
+      //   })
+ 
+      // })
+      let arr_id = temp.map((element)=>element[0])
+      // console.log(arr_student,"obj")
+      console.log(arr_id,"id")
 
-      // setEditObj(importedRuleObj);
-
+     
+      addAllStudents({
+        student_array:arr_id,
+        section_id:id
+      })
       // addModal.onOpen();
     };
     reader.readAsText(e.target.files[0]);
 
     // Clear the input so if we select the same file again it works
     e.target.value = '';
-    return;
+    return ;
   };
-
+//  console.log(temp,"temp")
   return (
     <Fragment>
+      {/* <Text>{temp}</Text> */}
       <Flex justifyContent={'space-between'} alignItems={'center'}>
       <IoIosArrowBack
             size={24}
@@ -137,14 +227,37 @@ const SectionInner = () => {
           // multiple={false}
         />
         {/* <Text m={'10px'}>Upload CSV file to add Students</Text> */}
-        <Button onClick={onButtonClick}>Add CSV file to add students </Button>
+        <Flex flexWrap={'wrap'}>
+        <Button onClick={onButtonClick} m={1}>Add CSV file to add students </Button>
+        <Button m={1} onClick={addStudentModal.onOpen}> add student</Button>
+        </Flex>
       </Flex>
 
       <Box my={'20px'}>
         <TableTemplate
         columns={studentsSectionTableHeader}
         data={sectionStudents}
-        actions={[]}
+        actions={[
+          {
+            aria_label: 'View ',
+            icon: (
+              <Icon
+                as={AiOutlineEye}
+                h={4}
+                w={4}
+                color={useColorModeValue(
+                  'lightMode.primary.default',
+                  'darkMode.secondary.gray'
+                )}
+              />
+            ),
+            onPress: (item) =>
+              navigate(`/students/${item.student_id}`, {
+                // state: { type: item.organization_type },
+              }),
+           
+          },
+         ]}
         isLoading={isLoadingSectionStudents}
         emptyState={<EmptyState message={'No Students in this section yet'}/>}
         />
@@ -187,6 +300,61 @@ const SectionInner = () => {
 
           } */}
       </Box>
+
+      <ModalTemplate isOpen={addStudentModal.isOpen} onClose={addStudentModal.onClose} title={'Add Course'} >
+        <form onSubmit={formik.handleSubmit}>
+          <Box mx={'5px'}>
+            <Text mb='8px'>Student ID </Text>
+            <Input
+              id='student_id'
+              name='student_id'
+              onChange={formik.handleChange}
+              value={formik.values.student_id}
+              placeholder='439... '
+              size='md'
+              mb={'10px'}
+            />
+            <Text mb='8px'>Section Id </Text>
+            <Input
+              id='section_id'
+              name='section_id'
+              onChange={formik.handleChange}
+              value={formik.values.section_id}
+              placeholder='@example 466'
+              size='md'
+              mb={'10px'}
+              isDisabled
+            />
+            
+
+           
+{/* <CheckboxGroup colorScheme='green' defaultValue={['has_tutorial']}> */}
+ 
+{/* </CheckboxGroup> */}
+          </Box>
+          <Flex alignItems={'center'}>
+            <Button isLoading={isLoadingAddStudent} type='submit' m={'10px'} colorScheme={'blue'}>
+              Submit
+            </Button>
+            <Button type='button' m={'10px'} onClick={()=>{
+              addStudentModal.onClose()
+              formik.resetForm()
+            }}>
+              Cancel
+            </Button>
+          </Flex>
+        </form>
+      </ModalTemplate>
+
+
+      <Prompt
+    isOpen={ warningPrompt.isOpen}
+    onClose={
+      warningPrompt.onClose
+    }
+    title={promptErrMsg}
+    type={'success'}
+  />
     </Fragment>
   );
 };

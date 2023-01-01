@@ -11,6 +11,11 @@ import {
   Td,
   Tr,
   useColorModeValue,
+  Spinner,
+  Box,
+  Flex,
+  Stack,
+  Skeleton
 } from "@chakra-ui/react";
 // import TableLoader from "../../../shared-components/TableLoader";
 import { isEmpty } from "../ModalTemplate";
@@ -48,7 +53,9 @@ function TableBody({
   return (
     <Tbody mt={"18px"} w={"fit-content"} justifyContent={"space-between"}>
       {isLoading ? (
-        "Loading..."
+        <Flex mt={5} >
+          <Spinner />
+        </Flex>
         // <TableLoader
         //   col={canSelect ? columns.length + 2 : columns.length + 1}
         //   row={8}
@@ -66,6 +73,7 @@ function TableBody({
                   width={"fit-content"}
                   maxW={!isEmpty(c.columnWidth) ? c.columnWidth : "max-content"}
                   whiteSpace={"pre-wrap"}
+                  // key={index}
                 >
                   <TableCell
                     customCells={customCells}
