@@ -16,7 +16,7 @@ import {
 
 // import PropTypes from 'prop-types';
 import { IoTrash, IoCheckmarkSharp } from 'react-icons/io5';
-
+import {RiAlertFill} from 'react-icons/ri'
 function Prompt({ isOpen, onClose, title, buttons, type, children }) {
   const isSuccessPrompt = type === 'success';
 
@@ -37,7 +37,16 @@ function Prompt({ isOpen, onClose, title, buttons, type, children }) {
           alignItems={'center'}
           justifyContent={'center'}
         >
+          <Box>
+            <Box display={'flex'} justifyContent='center'>
+            <RiAlertFill
+               size={60}
+               color={'orange'}
+              />
+            </Box>
             <Heading color={"orange"} fontWeight={'bold'}>Warning</Heading>
+          </Box>
+            
           {/* <Box
             bg={isSuccessPrompt ? 'success.10' : 'danger.10'}
             w="8rem"
@@ -47,7 +56,7 @@ function Prompt({ isOpen, onClose, title, buttons, type, children }) {
             borderRadius={'50%'}
             alignItems={'center'}
             justifyContent={'center'}
-            overflow={'hidden'}
+            // overflow={'hidden'}
             display={'flex'}
           >
             <Box
@@ -60,9 +69,12 @@ function Prompt({ isOpen, onClose, title, buttons, type, children }) {
               justifyContent={'center'}
             >
               <Icon
-                as={isSuccessPrompt ? IoCheckmarkSharp : IoTrash}
+                as={IoTrash}
                 w={6}
                 h={6}
+              />
+              <RiAlertFill
+               size={24}
               />
             </Box>
           </Box> */}
@@ -102,6 +114,8 @@ function Prompt({ isOpen, onClose, title, buttons, type, children }) {
                   onClick={button.onPress}
                   key={index}
                   isLoading={button?.isLoading}
+                  bg={button.type=='danger'?'#FF6347':'lightgrey'}
+                  color={button.type=='danger'?'white':'black'}
                   {...button?.styles}
                 >
                   {button.label}

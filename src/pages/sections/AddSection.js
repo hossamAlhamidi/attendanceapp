@@ -26,19 +26,23 @@ import {
   RadioGroup,
   Radio
 } from '@chakra-ui/react';
+import { ADD_SECTION } from '../../services/queryKeys';
 import { useFormik ,Field ,FormikProvider} from 'formik';
 import { useGetAllCourses } from '../../services/query/courses';
 import { isEmpty } from '../../components/ModalTemplate';
 import CustomSelect from '../../components/CustomeSelect';
 import { useAddSection } from '../../services/query/sections';
 import { useGetAllInstructor } from '../../services/query/instructors';
+import { useQueryClient } from 'react-query';
 import { object } from 'yup';
+import { useNavigate } from 'react-router-dom';
 const AddSection = () => {
   const [isSameTime, setIsSameTime] = useState(true);
   const [isTutorial,setIsTutorial] = useState(false)
   const [isLab,setIsLab] = useState(false)
   const toast = useToast()
-
+  const queryClient = useQueryClient();
+  const navigate = useNavigate()
   const { data:coursesData, isLoading:isLoadingCourses, refetch:getAllCourses } = useGetAllCourses({
     onSuccess: (res) => {
       // console.log(res, 'success');
@@ -77,7 +81,7 @@ const AddSection = () => {
       const derivedOptions = coursesData.map((option) => {
         return {
           value: option.course_id,
-          label: `${option.abbreviation} ${option.course_id}: ${option.course_name}`,
+          label: `${option.course_id}: ${option.course_name}`,
           has_lab:option.has_lab,
           has_tutorial:option.has_tutorial
         };
@@ -99,6 +103,9 @@ const AddSection = () => {
         isClosable: true,
         position: 'top-right',
       });
+      queryClient.invalidateQueries([ADD_SECTION]);
+      queryClient.refetchQueries({ queryKey: [ADD_SECTION] })
+      navigate("/sections")
     },
     onError:(err)=>{
       toast({

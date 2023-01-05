@@ -7,10 +7,10 @@ export const courseTableHeader = [
       label: 'Course Name',
       accessor: 'course_name',
     },
-    {
-      label: 'Abbreviation',
-      accessor: 'abbreviation',
-    },
+    // {
+    //   label: 'Abbreviation',
+    //   accessor: 'abbreviation',
+    // },
     {
       label: 'Course Hours',
       accessor: 'course_hours',

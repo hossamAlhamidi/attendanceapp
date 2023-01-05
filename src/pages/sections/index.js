@@ -20,6 +20,7 @@ import {
   WrapItem,
   Icon
 } from '@chakra-ui/react';
+import EmptyState from '../../components/EmptyState';
 import { AiOutlineEye } from 'react-icons/ai';
 import {  FiSearch } from 'react-icons/fi';
 import { useGetAllSections } from '../../services/query/sections';
@@ -92,6 +93,7 @@ const Sections = () => {
                  
                 },
                ]}
+               emptyState={<EmptyState message={'No added sections'}/>}
               />
 
           {/* {

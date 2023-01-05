@@ -1,7 +1,9 @@
 import { 
     GET_STUDENT_URL,
     UPDATE_STUDENT_URL,
-    GET_STUDENT_BY_ID_URL
+    GET_STUDENT_BY_ID_URL,
+    GET_ABSENCE_FOR_STUDENT,
+    DELETE_ABSENCE
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -27,3 +29,18 @@ import {
 
         return res.data;
     }
+
+    
+    export const getAbsenceForStudent = async (id)=>{
+      const res = await axiosInstance.get(baseUrl+GET_ABSENCE_FOR_STUDENT(id))
+    
+      return res.data
+    }
+
+    export const deleteAbsence = async (body)=>{
+       console.log(body,"body")
+      const res = await axiosInstance.delete(baseUrl+DELETE_ABSENCE(body))
+    
+      return res.data
+    }
+  

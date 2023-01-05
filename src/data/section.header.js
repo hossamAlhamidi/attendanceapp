@@ -23,6 +23,11 @@ export const sectionTableHeader = [
       label: 'type',
       accessor: 'type',
     }, 
+    {
+      label: 'Time',
+      accessor: 'time',
+      type:"time"
+    }, 
     // {
     //   label: 'The Number of Alerts',
     //   accessor: 'number_of_results',

@@ -20,6 +20,7 @@ import {
   useToast,
   Checkbox,CheckboxGroup
 } from '@chakra-ui/react';
+import EmptyState from '../../components/EmptyState'
 import { FiSearch } from 'react-icons/fi';
 import { useGetAllCourses } from '../../services/query/courses';
 import CardStructure from '../../components/Card';
@@ -121,6 +122,7 @@ const Courses = () => {
               data = {coursesData}
               isLoading={isLoadingCourses}
               actions={[]}
+              emptyState={<EmptyState message={'No added courses'}/>}
               />
       {/* {!isLoadingCourses && (
         <SimpleGrid minChildWidth='300px' spacing='40px' mt={'2em'}>
