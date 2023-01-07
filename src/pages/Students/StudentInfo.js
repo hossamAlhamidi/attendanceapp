@@ -209,6 +209,7 @@ const StudentInfo = () => {
    const sectionDetails = (section_id)=>{
      if(currentStudentAbsence){
       let filtered = currentStudentAbsence.filter((item)=>item.section_id==section_id)[0]
+      console.log(filtered,"filtered")
       return {
         // course_id:filtered.course_id,
         course_name:filtered.course_name,
@@ -298,8 +299,8 @@ const StudentInfo = () => {
             {
               !isLoadingStudentAbsence&&!isEmpty(studentAbsence)?
               <Card p={10}>
+                {/* <Text>{JSON.stringify(Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id=='Ahmad2131')?.map((e)=>e.section_id))))}</Text> */}
                 {
-                // <Text>{JSON.stringify(Array.from(new Set(studentAbsence?.map((e)=>e.course_id))))}</Text>
                 Array.from(new Set(studentAbsence?.map((e)=>e.section_id)))
                 .map((section_id)=>{
                   return(

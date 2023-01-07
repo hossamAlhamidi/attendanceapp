@@ -29,13 +29,20 @@ import {
     const data = [
       {
         id: 1,
+        name: 'Dashboard',
+        path: '/dashboard',
+        icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
+        
+      },
+      {
+        id: 2,
         name: 'Sections',
         path: '/sections',
         icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
         
       },
       {
-        id: 2,
+        id: 3,
         name: 'Courses',
         // path: '/search',
         path: '/courses',
@@ -43,14 +50,14 @@ import {
         
       },
       {
-        id: 3,
+        id: 4,
         name: 'Students',
         path: '/students',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
         
       },
       {
-        id: 3,
+        id: 5,
         name: 'Instructors',
         path: '/instructors',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
