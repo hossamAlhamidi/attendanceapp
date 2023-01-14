@@ -16,7 +16,10 @@ import {
   useToast,
   Stack,
   Icon,
-  useDisclosure
+  useDisclosure,
+  Spinner,
+  FormLabel,
+  FormControl
 } from '@chakra-ui/react';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { isEmpty } from '../../components/ModalTemplate';
@@ -240,7 +243,7 @@ const StudentInfo = () => {
 
         <TabPanels>
           <TabPanel>
-          {!isLoadingStudentInformation&& <Card my={5}>
+          {!isLoadingStudentInformation? <Card my={5}>
               <CardBody>
                 <Flex justifyContent={'flex-end'}>
                   <Button onClick={() => setIsEdit(!isEdit)} mb={10}>
@@ -248,7 +251,9 @@ const StudentInfo = () => {
                   </Button>
                 </Flex>
                <SimpleGrid columns={[1, 2]} spacing={10}>
-                  <Input
+                <FormControl>
+                  <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Student ID</FormLabel>
+                <Input
                     placeholder='Student ID'
                     name='student_id'
                     id='student_id'
@@ -257,7 +262,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={true}
                   />
-                  <Input
+                </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Name</FormLabel>
+                 <Input
                     placeholder='Name'
                     name='student_name'
                     id='student_name'
@@ -266,7 +275,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
-                  <Input
+                 </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Email</FormLabel>
+                 <Input
                     placeholder='Email'
                     name='email'
                     id='email'
@@ -275,7 +288,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
-                  <Input
+                 </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Phone Number</FormLabel>
+                 <Input
                     placeholder='05********'
                     name='phone_number'
                     id='phone_number'
@@ -284,6 +301,8 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
+                 </FormControl>
+                 
                 </SimpleGrid>
                 
                 <Button
@@ -294,7 +313,10 @@ const StudentInfo = () => {
                   Save
                 </Button>
               </CardBody>
-            </Card>
+            </Card>: 
+             <Box display={'flex'} justifyContent='center' mt={5}>
+              <Spinner />
+              </Box>
             }
           </TabPanel>
           <TabPanel>
@@ -369,7 +391,7 @@ const StudentInfo = () => {
                 })
                 }
               </Card>:
-              <Text textAlign={'center'} mt={5}>No Absence for this student</Text>
+              !isLoadingStudentAbsence&&<Text textAlign={'center'} mt={5}>No Absence for this student</Text>
               
             }
           </TabPanel>

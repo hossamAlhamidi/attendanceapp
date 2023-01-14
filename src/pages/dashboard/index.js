@@ -43,7 +43,7 @@ const Dashboard = () => {
 
         <Card   alignSelf={'center'} >
           <CardHeader>
-            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Most Instructors registered courses</Heading>
+            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Most Instructors Teaching courses</Heading>
           </CardHeader>
         <Box
           style={{

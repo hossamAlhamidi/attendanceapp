@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from "react-query";
 import { customTheme } from './styles/theme';
+import { ReactQueryDevtools } from 'react-query/devtools'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 const queryClient = new QueryClient({
@@ -27,6 +28,7 @@ root.render(
     <App />
     </ChakraProvider>
     </BrowserRouter>
+     {/* <ReactQueryDevtools initialIsOpen={true}/> */}
     </QueryClientProvider>
   </React.StrictMode>
 );
