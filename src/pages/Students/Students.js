@@ -18,14 +18,21 @@ import {
   useDisclosure,
   Label,
   useToast,
+  Icon
 } from '@chakra-ui/react';
+import { AiOutlineEye } from 'react-icons/ai';
+import { useAuthPermission } from '../../hook/useAuthPermission';
 import { FiSearch } from 'react-icons/fi';
 import { useGetStudentById } from '../../services/query/student';
 import { isEmpty } from '../../components/ModalTemplate';
 import { Link,useNavigate } from 'react-router-dom';
+import TableTemplate from '../../components/Table';
+import { studentsTableHeader } from '../../data/students.headers';
+import EmptyState from '../../components/EmptyState';
 const Students = () => {
   const [search, setSearch] = useState('');
   const toast = useToast()
+  const {instructor_id} =useAuthPermission()
   const navigate = useNavigate()
    const {data,mutate,isLoading} = useGetStudentById({
     onSuccess:(res)=>{
@@ -43,10 +50,13 @@ const Students = () => {
       });
     }
    })
- 
    const handleSubmit = (e)=>{
     e.preventDefault();
-    mutate(search)
+    // mutate(search)
+    mutate({
+      student_id:search,
+      instructor_id:instructor_id
+    })
     setSearch("")
     
    }
@@ -79,7 +89,32 @@ const Students = () => {
         </InputGroup>
         </form>
       </Box>
-     { !isLoading&&!isEmpty(data)?
+      <TableTemplate
+               columns={studentsTableHeader}
+               data={data}
+              //  isLoading={isLoading}
+               actions={[
+                {
+                  aria_label: 'View ',
+                  icon: (
+                    <Icon
+                      as={AiOutlineEye}
+                      h={4}
+                      w={4}
+                      color={useColorModeValue(
+                        'lightMode.primary.default',
+                        'darkMode.secondary.gray'
+                      )}
+                    />
+                  ),
+                  onPress: (item) =>
+                  navigateTo(item)               
+                },
+               ]}
+              //  emptyState={<EmptyState message={'No Founded Students'}/>}
+              />
+
+     {/* { !isLoading&&!isEmpty(data)?
        data.map((element)=>{
         return(
           <Card key={element.student_id} my={20}>
@@ -95,17 +130,17 @@ const Students = () => {
                       
                             </CardBody>
                             <CardFooter>
-                              {/* <Link to={`/students/${element.student_id}`}> */}
+                             
                                 
                                 <Button onClick={()=>navigateTo(element)}>View here</Button>
-                                {/* </Link> */}
+                              
                             </CardFooter>
           </Card>
         )
        })
        :null
       //  !isLoading&&<Text textAlign={'center'} fontWeight={'bold'} my={20}>No student found</Text>
-     }
+     } */}
     </Fragment>
   );
 };

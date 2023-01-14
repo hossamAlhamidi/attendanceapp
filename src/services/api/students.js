@@ -10,9 +10,10 @@ import {
     
  
     
-    export const getStudentById = async (id)=>{
-      const res = await axiosInstance.post(baseUrl+GET_STUDENT_URL(id),{
-        student_id:id
+    export const getStudentById = async (body)=>{
+      const res = await axiosInstance.post(baseUrl+GET_STUDENT_URL,{
+        student_id:body.student_id,
+        instructor_id:body.instructor_id
       })
     
       return res.data

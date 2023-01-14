@@ -62,7 +62,7 @@ export const AuthPageLayout = ({ children }) => {
       position="relative"
     >
       <>
-        {/* <Navbar></Navbar> */}
+        <Navbar></Navbar>
         <Box
           width={
             showSideNav

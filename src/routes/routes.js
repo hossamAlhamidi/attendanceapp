@@ -11,7 +11,7 @@ const Dashboard = WithSuspense(
 );
 
   const Sections = WithSuspense(
-    lazy(() => import('../pages/sections/index'))
+    lazy(() => import('../pages/sections/SectionInstructor'))
   );
 
   const AddSection = WithSuspense(

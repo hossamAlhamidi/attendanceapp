@@ -17,7 +17,7 @@ import {
   Stack,
   Text,
 } from '@chakra-ui/react';
-
+import { useQueryClient } from 'react-query';
 // import { useLogOut } from '../../utils/helpers';
 import { useNavigate } from 'react-router-dom';
 const Links = ['Dashboard', 'Projects', 'Team'];
@@ -38,17 +38,32 @@ const NavLink = ({ children }) => (
 );
 
 function Navbar() {
+   const useLogOut = () => {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    return () => {
+      localStorage.removeItem('user');
+      queryClient.clear();
+      setTimeout(() => {
+        navigate('/login');
+        // window.location.reload()
+        // window.location.reload(); // removing this because WS logout toast wasn't persisting between authenticated pages and no-auth pages
+      }, 500);
+    };
+  };
   const { isOpen, onOpen, onClose } = useDisclosure();
 //   const logOut = useLogOut();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const navigateProfile = () => {
     navigate('/profile');
   };
 
+  const logOut = useLogOut();
   return (
     <>
       <Box
-        bg={useColorModeValue('#00609C', 'lightMode.secondary.gray')}
+        bg={useColorModeValue('darkMode.white', 'lightMode.secondary.gray')}
         px={4}
       >
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
@@ -99,7 +114,7 @@ function Navbar() {
               </MenuButton>
               <MenuList>
                 <MenuItem >Edit Profile</MenuItem>
-                <MenuItem  color={'red'}>
+                <MenuItem onClick={logOut}  color={'red'}>
                   Sign Out
                 </MenuItem>
               </MenuList>

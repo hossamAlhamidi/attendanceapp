@@ -21,7 +21,7 @@ import {
   import { FiTool, FiAlertTriangle } from 'react-icons/fi';
   import { GiBinoculars } from 'react-icons/gi';
   import { RiSearchLine } from 'react-icons/ri';
-
+  import { useAuthPermission } from '../hook/useAuthPermission';
 
   const Sidebar = ({ isMobile, showSideNav, setShowSideNav }) => {
 

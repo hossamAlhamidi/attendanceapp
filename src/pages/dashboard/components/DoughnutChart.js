@@ -47,12 +47,12 @@ export const data = {
         radius: '75%',
         datalabels: {
             
-          color: 'black',
+          color: 'white',
           labels: {
             title: {
               font: {
                 weight: 'bold',
-                size:8
+                size:8,
               }
             },
            

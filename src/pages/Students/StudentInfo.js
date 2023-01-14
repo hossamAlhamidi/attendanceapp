@@ -32,6 +32,7 @@ import TableTemplate from '../../components/Table';
 import { studentAbsenceTableHeader } from '../../data/studentAbsence.header';
 import { useDeleteAbsence } from '../../services/query/student';
 import Prompt from '../../components/Prompt'
+import { useAuthPermission } from '../../hook/useAuthPermission';
 const StudentInfo = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -41,6 +42,7 @@ const StudentInfo = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [deletedItem,setDeletedItem] = useState(null)
   const { id } = params;
+  const {is_admin,instructor_id} = useAuthPermission()
   const { student } = location.state || '';
     const initialValues = {
     student_id: "",
@@ -230,7 +232,7 @@ const StudentInfo = () => {
         />
       </Box>
 
-      <Tabs>
+     { is_admin?<Tabs>
         <TabList>
           <Tab>Student Info</Tab>
           <Tab>Student Courses</Tab>
@@ -373,6 +375,92 @@ const StudentInfo = () => {
           </TabPanel>
         </TabPanels>
       </Tabs>
+      :
+      <Tabs>
+      <TabList>
+        <Tab>Student Courses</Tab>
+      </TabList>
+
+      <TabPanels>
+        <TabPanel>
+          {
+            !isLoadingStudentAbsence&&!isEmpty(studentAbsence)?
+            <Card p={10}>
+              {/* <Text>{JSON.stringify(Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id=='Ahmad2131')?.map((e)=>e.section_id))))}</Text> */}
+              {
+              Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id==instructor_id)?.map((e)=>e.section_id)))
+              .map((section_id)=>{
+                return(
+                  <Box my={10}>
+                  
+                  {/* <Text>{JSON.stringify(Object.keys(sectionDetails(section_id)).map((key)=>sectionDetails(section_id)[key]))}</Text> */}
+                  <Stack
+                  borderBottom={'1px solid #EDF1F7'}
+                  alignItems={'center'}
+                  paddingLeft={4}
+                  gap={5}
+                  // color={orgDetailsLabelColor}
+                  fontSize={[11, 12]}
+                  fontFamily={'Inter'}
+                  fontWeight={400}
+                  pb={3}
+                  overflowX={'auto'}
+                  direction='row'
+                  flexWrap={'wrap'}
+          >
+            {
+              Object.keys(sectionDetails(section_id)).map((key)=>
+              {
+               return(
+                <> 
+                <Box>                             
+                {/* <Text fontSize={15} >{key.replace("_"," ")}</Text> */}
+                <Text  
+                fontSize={[12, 12, 15]}
+                fontWeight={'bold'}
+                >
+                  {sectionDetails(section_id)[key]}
+                  </Text>
+                  </Box>  
+                  </>
+               ) 
+              })
+            }
+            </Stack>
+                  <TableTemplate
+                   columns={studentAbsenceTableHeader}
+                   data={filterDataBySection(section_id)}
+                    actions = {
+                      [
+                        {
+                          aria_label: 'Delete Cognna Admins',
+                          icon: <Icon as={CgTrashEmpty} color={'red'} />,
+                          onPress: (item) => {
+                            console.log(item,"item")
+                            setDeletedItem({
+                              student_id:item?.student_id,
+                              section_id:item?.section_id,
+                              absence_date:item?.absence_date
+                            })
+         
+                            confirmPrompt.onOpen();
+                          },
+                        },
+                      ]
+                    }
+                  />
+                  </Box>
+                )
+              })
+              }
+            </Card>:
+           !isLoadingStudentAbsence&& <Text textAlign={'center'} mt={5}>No Absence for this student</Text>
+            
+          }
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+}
 
       <Prompt
         isOpen={confirmPrompt.isOpen}
