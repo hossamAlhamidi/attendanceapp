@@ -1,8 +1,17 @@
 import {useRoutes,useLocation} from 'react-router-dom';
-import { PRIVATE_ROUTES, PUBLIC_ROUTES } from './routes';
+import { PRIVATE_ROUTES, PUBLIC_ROUTES,PROTECTED_ROUTES } from './routes';
 import { AuthPageLayout ,NonAuthPageLayout} from '../components/PageLayout';
+import { useAuthPermission } from '../hook/useAuthPermission';
 
-
+const getUserType = ()=>{
+  const { is_admin } = JSON.parse(localStorage.getItem('user'));
+  if(is_admin){
+    return 'admin'
+  }
+  else{
+    return 'instructor'
+  }
+}
 const PublicRouteWrapper = () => {
     const routes = useRoutes(PUBLIC_ROUTES);
     return routes;
@@ -10,7 +19,7 @@ const PublicRouteWrapper = () => {
   
   const PrivateRouteWrapper = () => {
     // const routes = useRoutes(PRIVATE_ROUTES);
-    const routes = useRoutes(PRIVATE_ROUTES);
+    const routes = useRoutes(PROTECTED_ROUTES[getUserType()]);
   
     return routes;
   };

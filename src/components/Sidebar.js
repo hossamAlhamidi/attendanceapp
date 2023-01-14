@@ -24,7 +24,7 @@ import {
   import { useAuthPermission } from '../hook/useAuthPermission';
 
   const Sidebar = ({ isMobile, showSideNav, setShowSideNav }) => {
-
+    const {is_admin} = useAuthPermission()
     // const detection_rule_isVisible = getPermissionsAlt(permissions,"_indicator",userType).userActions.view
     const data = [
       {
@@ -32,6 +32,7 @@ import {
         name: 'Dashboard',
         path: '/dashboard',
         icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
+        isVisible:is_admin
         
       },
       {
@@ -39,7 +40,7 @@ import {
         name: 'Sections',
         path: '/sections',
         icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:!is_admin
       },
       {
         id: 3,
@@ -47,21 +48,21 @@ import {
         // path: '/search',
         path: '/courses',
         icon: <RiSearchLine style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:is_admin
       },
       {
         id: 4,
         name: 'Students',
         path: '/students',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:true
       },
       {
         id: 5,
         name: 'Instructors',
         path: '/instructors',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:is_admin
       },
    
     ];
@@ -171,7 +172,7 @@ import {
             (
                 (
                     
-                  <NavLink
+                 item.isVisible&& <NavLink
                     key={item.path}
                     to={item.path}
                     style={({ isActive }) =>
