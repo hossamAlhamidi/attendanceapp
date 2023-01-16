@@ -21,40 +21,48 @@ import {
   import { FiTool, FiAlertTriangle } from 'react-icons/fi';
   import { GiBinoculars } from 'react-icons/gi';
   import { RiSearchLine } from 'react-icons/ri';
-
+  import { useAuthPermission } from '../hook/useAuthPermission';
 
   const Sidebar = ({ isMobile, showSideNav, setShowSideNav }) => {
-
+    const {is_admin} = useAuthPermission()
     // const detection_rule_isVisible = getPermissionsAlt(permissions,"_indicator",userType).userActions.view
     const data = [
       {
         id: 1,
-        name: 'Sections',
-        path: '/sections',
+        name: 'Dashboard',
+        path: '/dashboard',
         icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
+        isVisible:is_admin
         
       },
       {
         id: 2,
+        name: 'Sections',
+        path: '/sections',
+        icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
+        isVisible:!is_admin
+      },
+      {
+        id: 3,
         name: 'Courses',
         // path: '/search',
         path: '/courses',
         icon: <RiSearchLine style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:is_admin
       },
       {
-        id: 3,
+        id: 4,
         name: 'Students',
         path: '/students',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:true
       },
       {
-        id: 3,
+        id: 5,
         name: 'Instructors',
         path: '/instructors',
         icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
-        
+        isVisible:is_admin
       },
    
     ];
@@ -164,7 +172,7 @@ import {
             (
                 (
                     
-                  <NavLink
+                 item.isVisible&& <NavLink
                     key={item.path}
                     to={item.path}
                     style={({ isActive }) =>

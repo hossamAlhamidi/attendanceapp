@@ -3,13 +3,19 @@ GET_ALL_SECTIONS,
 GET_ALL_SECTION_STUDENTS_URL,
 ADD_SECTION,
 ADD_ALL_STUDENTS_TO_SECTION,
-ADD_STUDENT_TO_SECTION
+ADD_STUDENT_TO_SECTION,
+GET_INSTRUCTOR_SECTIONS
 } from '../apiUrl';
 import axiosInstance, { baseUrl } from '../config/axiosInstance';
 import axios from 'axios';
 
 export const getAllSections = async () => {
   const res = await axiosInstance.get(baseUrl + GET_ALL_SECTIONS);
+  return res.data;
+};
+
+export const getInstructorSections = async (id) => {
+  const res = await axiosInstance.get(baseUrl + GET_INSTRUCTOR_SECTIONS(id));
   return res.data;
 };
 

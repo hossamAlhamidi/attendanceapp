@@ -100,6 +100,7 @@ const SectionInner = () => {
         position: 'top-right',
       });
       addStudentModal.onClose()
+      formik.resetForm()
       refetch()
     },
     onError:(err)=>{

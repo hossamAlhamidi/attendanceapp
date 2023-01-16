@@ -26,7 +26,7 @@ import {
   RadioGroup,
   Radio
 } from '@chakra-ui/react';
-import { ADD_SECTION } from '../../services/queryKeys';
+import { ADD_SECTION,GET_SECTIONS } from '../../services/queryKeys';
 import { useFormik ,Field ,FormikProvider} from 'formik';
 import { useGetAllCourses } from '../../services/query/courses';
 import { isEmpty } from '../../components/ModalTemplate';
@@ -103,8 +103,8 @@ const AddSection = () => {
         isClosable: true,
         position: 'top-right',
       });
-      queryClient.invalidateQueries([ADD_SECTION]);
-      queryClient.refetchQueries({ queryKey: [ADD_SECTION] })
+      // queryClient.invalidateQueries([ADD_SECTION]);
+      queryClient.refetchQueries({ queryKey: [GET_SECTIONS] })
       navigate("/sections")
     },
     onError:(err)=>{

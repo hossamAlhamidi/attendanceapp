@@ -16,7 +16,10 @@ import {
   useToast,
   Stack,
   Icon,
-  useDisclosure
+  useDisclosure,
+  Spinner,
+  FormLabel,
+  FormControl
 } from '@chakra-ui/react';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { isEmpty } from '../../components/ModalTemplate';
@@ -32,6 +35,7 @@ import TableTemplate from '../../components/Table';
 import { studentAbsenceTableHeader } from '../../data/studentAbsence.header';
 import { useDeleteAbsence } from '../../services/query/student';
 import Prompt from '../../components/Prompt'
+import { useAuthPermission } from '../../hook/useAuthPermission';
 const StudentInfo = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -41,6 +45,7 @@ const StudentInfo = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [deletedItem,setDeletedItem] = useState(null)
   const { id } = params;
+  const {is_admin,instructor_id} = useAuthPermission()
   const { student } = location.state || '';
     const initialValues = {
     student_id: "",
@@ -209,6 +214,7 @@ const StudentInfo = () => {
    const sectionDetails = (section_id)=>{
      if(currentStudentAbsence){
       let filtered = currentStudentAbsence.filter((item)=>item.section_id==section_id)[0]
+      console.log(filtered,"filtered")
       return {
         // course_id:filtered.course_id,
         course_name:filtered.course_name,
@@ -229,7 +235,7 @@ const StudentInfo = () => {
         />
       </Box>
 
-      <Tabs>
+     { is_admin?<Tabs>
         <TabList>
           <Tab>Student Info</Tab>
           <Tab>Student Courses</Tab>
@@ -237,7 +243,7 @@ const StudentInfo = () => {
 
         <TabPanels>
           <TabPanel>
-          {!isLoadingStudentInformation&& <Card my={5}>
+          {!isLoadingStudentInformation? <Card my={5}>
               <CardBody>
                 <Flex justifyContent={'flex-end'}>
                   <Button onClick={() => setIsEdit(!isEdit)} mb={10}>
@@ -245,7 +251,9 @@ const StudentInfo = () => {
                   </Button>
                 </Flex>
                <SimpleGrid columns={[1, 2]} spacing={10}>
-                  <Input
+                <FormControl>
+                  <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Student ID</FormLabel>
+                <Input
                     placeholder='Student ID'
                     name='student_id'
                     id='student_id'
@@ -254,7 +262,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={true}
                   />
-                  <Input
+                </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Name</FormLabel>
+                 <Input
                     placeholder='Name'
                     name='student_name'
                     id='student_name'
@@ -263,7 +275,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
-                  <Input
+                 </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Email</FormLabel>
+                 <Input
                     placeholder='Email'
                     name='email'
                     id='email'
@@ -272,7 +288,11 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
-                  <Input
+                 </FormControl>
+                 
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Phone Number</FormLabel>
+                 <Input
                     placeholder='05********'
                     name='phone_number'
                     id='phone_number'
@@ -281,6 +301,8 @@ const StudentInfo = () => {
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
                   />
+                 </FormControl>
+                 
                 </SimpleGrid>
                 
                 <Button
@@ -291,15 +313,18 @@ const StudentInfo = () => {
                   Save
                 </Button>
               </CardBody>
-            </Card>
+            </Card>: 
+             <Box display={'flex'} justifyContent='center' mt={5}>
+              <Spinner />
+              </Box>
             }
           </TabPanel>
           <TabPanel>
             {
               !isLoadingStudentAbsence&&!isEmpty(studentAbsence)?
               <Card p={10}>
+                {/* <Text>{JSON.stringify(Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id=='Ahmad2131')?.map((e)=>e.section_id))))}</Text> */}
                 {
-                // <Text>{JSON.stringify(Array.from(new Set(studentAbsence?.map((e)=>e.course_id))))}</Text>
                 Array.from(new Set(studentAbsence?.map((e)=>e.section_id)))
                 .map((section_id)=>{
                   return(
@@ -366,12 +391,98 @@ const StudentInfo = () => {
                 })
                 }
               </Card>:
-              <Text textAlign={'center'} mt={5}>No Absence for this student</Text>
+              !isLoadingStudentAbsence&&<Text textAlign={'center'} mt={5}>No Absence for this student</Text>
               
             }
           </TabPanel>
         </TabPanels>
       </Tabs>
+      :
+      <Tabs>
+      <TabList>
+        <Tab>Student Courses</Tab>
+      </TabList>
+
+      <TabPanels>
+        <TabPanel>
+          {
+            !isLoadingStudentAbsence&&!isEmpty(studentAbsence)?
+            <Card p={10}>
+              {/* <Text>{JSON.stringify(Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id=='Ahmad2131')?.map((e)=>e.section_id))))}</Text> */}
+              {
+              Array.from(new Set(studentAbsence.filter((e)=>e.instructor_id==instructor_id)?.map((e)=>e.section_id)))
+              .map((section_id)=>{
+                return(
+                  <Box my={10}>
+                  
+                  {/* <Text>{JSON.stringify(Object.keys(sectionDetails(section_id)).map((key)=>sectionDetails(section_id)[key]))}</Text> */}
+                  <Stack
+                  borderBottom={'1px solid #EDF1F7'}
+                  alignItems={'center'}
+                  paddingLeft={4}
+                  gap={5}
+                  // color={orgDetailsLabelColor}
+                  fontSize={[11, 12]}
+                  fontFamily={'Inter'}
+                  fontWeight={400}
+                  pb={3}
+                  overflowX={'auto'}
+                  direction='row'
+                  flexWrap={'wrap'}
+          >
+            {
+              Object.keys(sectionDetails(section_id)).map((key)=>
+              {
+               return(
+                <> 
+                <Box>                             
+                {/* <Text fontSize={15} >{key.replace("_"," ")}</Text> */}
+                <Text  
+                fontSize={[12, 12, 15]}
+                fontWeight={'bold'}
+                >
+                  {sectionDetails(section_id)[key]}
+                  </Text>
+                  </Box>  
+                  </>
+               ) 
+              })
+            }
+            </Stack>
+                  <TableTemplate
+                   columns={studentAbsenceTableHeader}
+                   data={filterDataBySection(section_id)}
+                    actions = {
+                      [
+                        {
+                          aria_label: 'Delete Cognna Admins',
+                          icon: <Icon as={CgTrashEmpty} color={'red'} />,
+                          onPress: (item) => {
+                            console.log(item,"item")
+                            setDeletedItem({
+                              student_id:item?.student_id,
+                              section_id:item?.section_id,
+                              absence_date:item?.absence_date
+                            })
+         
+                            confirmPrompt.onOpen();
+                          },
+                        },
+                      ]
+                    }
+                  />
+                  </Box>
+                )
+              })
+              }
+            </Card>:
+           !isLoadingStudentAbsence&& <Text textAlign={'center'} mt={5}>No Absence for this student</Text>
+            
+          }
+        </TabPanel>
+      </TabPanels>
+    </Tabs>
+}
 
       <Prompt
         isOpen={confirmPrompt.isOpen}

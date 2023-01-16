@@ -30,11 +30,13 @@ import ModalTemplate from '../../components/ModalTemplate';
 import TableTemplate from '../../components/Table';
 import { sectionTableHeader } from '../../data/section.header';
 import { useNavigate } from 'react-router-dom';
+import { useGetInstructorSections } from '../../services/query/sections';
+import { useAuthPermission } from '../../hook/useAuthPermission';
 const Sections = () => {
   const navigate = useNavigate()
   const [search,setSearch] = useState("")
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {data,isLoading,refetch} = useGetAllSections({
+  const {data,isLoading,refetch} = useGetInstructorSections(useAuthPermission()?.instructor_id,{
     onSuccess:(res)=>{
       console.log(res,'success')
     },
@@ -42,6 +44,7 @@ const Sections = () => {
       console.log(err,'error')
     }
   })
+  
   return (
     <Fragment>
         <Flex alignItems={'center'} justifyContent={'space-between'} my={5}>
