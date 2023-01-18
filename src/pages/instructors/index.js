@@ -1,4 +1,4 @@
-import React, { Fragment,useState } from 'react'
+import React, { Fragment,useState,useMemo } from 'react'
 import {
   Box,
   Input,
@@ -35,16 +35,48 @@ import { useGetAllInstructor } from '../../services/query/instructors';
 import { instructorsTableHeader } from '../../data/instructors.headers';
 import EmptyState from '../../components/EmptyState';
 import { useAddInstructor } from '../../services/query/instructors';
+import Pagination from '../../components/pagination';
+import { isEmpty } from '../../components/ModalTemplate';
 const Instructors = () => {
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
     const navigate = useNavigate()
     const toast = useToast()
-    const [search,setSearch] = useState("")
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {data:instructors,isLoading:isLoadingInstructor,refetch:getAllInstructors} = useGetAllInstructor({
         onError:(err)=>{
             console.log(err)
         }
     })
+
+    const currentData = useMemo(() => {
+      if (instructors) {
+       const firstPageIndex = (currentPage - 1) * pageSize;
+       const lastPageIndex = firstPageIndex + pageSize;
+       return [...instructors].slice(firstPageIndex, lastPageIndex);
+     }
+     return [];
+   }, [instructors,currentPage,pageSize]);
+
+   const keys = ['instructor_id','instructor_name','email','phone_number']
+   const handleFilterData = (param) => {
+     if (isEmpty(param)) {
+       return currentData;
+     }
+   
+     let filtered = currentData.filter((item) => {
+       for (let i = 0; i < keys.length; i++) {
+         let key = keys[i];
+         if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
+           return true;
+         }
+       }
+       return false;
+     });
+ 
+     return filtered;
+   };
 
     const {mutate:addInstructor,data,isLoading:isLoadingAddInstructor} = useAddInstructor({
         onSuccess:(res)=>{
@@ -118,7 +150,7 @@ const Instructors = () => {
 
               <TableTemplate
         columns={instructorsTableHeader}
-        data={instructors}
+        data={handleFilterData(search)}
         actions={[
         //   {
         //     aria_label: 'View ',
@@ -144,6 +176,32 @@ const Instructors = () => {
         emptyState={<EmptyState message={'No Instructors added'}/>}
         />
 
+<Flex w="100%" paddingTop="24px">
+          <Flex flex={1}></Flex>
+          <Select
+            w="190px"
+            defaultValue={20}
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10 Items Per Page</option>
+            <option value={20}>20 Items Per Page</option>
+            <option value={50}>50 Items Per Page</option>
+            <option value={100}>100 Items Per Page</option>
+          </Select>
+          <Pagination
+            currentPage={currentPage}
+            totalCount={
+              isEmpty(search)
+                ? instructors?.length || 0
+                : handleFilterData(search).length
+            }
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </Flex>
 <ModalTemplate isOpen={isOpen} onClose={onClose} title={'Add Course'} >
         <form onSubmit={formik.handleSubmit}>
           <Box mx={'5px'}>

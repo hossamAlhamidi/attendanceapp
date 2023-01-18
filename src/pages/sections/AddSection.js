@@ -26,6 +26,7 @@ import {
   RadioGroup,
   Radio
 } from '@chakra-ui/react';
+import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
 import { ADD_SECTION,GET_SECTIONS } from '../../services/queryKeys';
 import { useFormik ,Field ,FormikProvider} from 'formik';
 import { useGetAllCourses } from '../../services/query/courses';
@@ -222,6 +223,15 @@ const AddSection = () => {
   return (
     <FormikProvider value={formik}>
     <Fragment>
+      <Box mb={10}>
+      <IoIosArrowBack
+            size={24}
+            cursor="pointer"
+            onClick={() => navigate(-1)}
+            
+          />
+      </Box>
+   
       <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>

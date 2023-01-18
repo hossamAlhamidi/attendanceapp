@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState ,useMemo} from 'react';
 import {
   Box,
   Input,
@@ -9,6 +9,7 @@ import {
   InputLeftElement,
   Card,
   CardHeader,
+  Select,
   CardFooter,
   Heading,
   CardBody,
@@ -20,6 +21,8 @@ import {
   useToast,
   Checkbox,CheckboxGroup
 } from '@chakra-ui/react';
+import { isEmpty } from '../../components/ModalTemplate';
+import Pagination from '../../components/pagination';
 import EmptyState from '../../components/EmptyState'
 import { FiSearch } from 'react-icons/fi';
 import { useGetAllCourses } from '../../services/query/courses';
@@ -31,6 +34,8 @@ import TableTemplate from '../../components/Table';
 import { courseTableHeader } from '../../data/courses.headers';
 const Courses = () => {
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const toast = useToast()
   const initValues ={
     course_name: '',
@@ -52,6 +57,33 @@ const Courses = () => {
     },
   });
 
+  const currentData = useMemo(() => {
+     if (coursesData) {
+      const firstPageIndex = (currentPage - 1) * pageSize;
+      const lastPageIndex = firstPageIndex + pageSize;
+      return [...coursesData].slice(firstPageIndex, lastPageIndex);
+    }
+    return [];
+  }, [coursesData,currentPage,pageSize]);
+
+    const keys = ['course_id','course_name']
+  const handleFilterData = (param) => {
+    if (isEmpty(param)) {
+      return currentData;
+    }
+  
+    let filtered = currentData.filter((item) => {
+      for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    return filtered;
+  };
   // add course 
   const {mutate:addCourse,data,isLoading:isLoadingAddCourse} = useAddCourse({
     onSuccess:(res)=>{
@@ -119,11 +151,38 @@ const Courses = () => {
 
               <TableTemplate
               columns={courseTableHeader}
-              data = {coursesData}
+              data = {handleFilterData(search)}
               isLoading={isLoadingCourses}
               actions={[]}
-              emptyState={<EmptyState message={'No added courses'}/>}
+              emptyState={<EmptyState message={'No courses'}/>}
               />
+
+         <Flex w="100%" paddingTop="24px">
+          <Flex flex={1}></Flex>
+          <Select
+            w="190px"
+            defaultValue={20}
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10 Items Per Page</option>
+            <option value={20}>20 Items Per Page</option>
+            <option value={50}>50 Items Per Page</option>
+            <option value={100}>100 Items Per Page</option>
+          </Select>
+          <Pagination
+            currentPage={currentPage}
+            totalCount={
+              isEmpty(search)
+                ? coursesData?.length || 0
+                : handleFilterData(search).length
+            }
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </Flex>
       {/* {!isLoadingCourses && (
         <SimpleGrid minChildWidth='300px' spacing='40px' mt={'2em'}>
           {coursesData.map((element, index) => {

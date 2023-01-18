@@ -48,10 +48,10 @@ const Sections = () => {
   return (
     <Fragment>
         <Flex alignItems={'center'} justifyContent={'space-between'} my={5}>
-        <Button marginRight={'10px'} ><Link to={`/addsection`}>Add Section</Link></Button>
+        {/* <Button marginRight={'10px'} ><Link to={`/addsection`}>Add Section</Link></Button> */}
         
        <Box maxW={['100%','50%']} my={'10px'}>
-                <InputGroup>
+                {/* <InputGroup>
                   <InputLeftElement
                     pointerEvents="none"
                     color="gray.300"
@@ -66,7 +66,7 @@ const Sections = () => {
                     value={search}
                   />
                   <InputLeftElement children={<FiSearch color="green.500" />} />
-                </InputGroup>
+                </InputGroup> */}
                 
               </Box>
               </Flex>

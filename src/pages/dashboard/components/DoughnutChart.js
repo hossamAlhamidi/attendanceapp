@@ -58,7 +58,7 @@ export const data = {
            
           },
           formatter: (val,context) => {
-            console.log(context,"val")
+            // console.log(context,"val")
             return context.chart.data.labels[context.dataIndex];
             }
         },

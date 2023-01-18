@@ -1,4 +1,4 @@
-import React, { Fragment, useRef,useState } from 'react';
+import React, { Fragment, useRef,useState,useMemo } from 'react';
 import {
   Box,
   Input,
@@ -13,6 +13,7 @@ import {
   Heading,
   CardBody,
   Text,
+  Select,
   Flex,
   SimpleGrid,
   Table,
@@ -39,9 +40,14 @@ import EmptyState from '../../components/EmptyState';
 import { useAddAllStudentsToSection } from '../../services/query/sections';
 import Prompt from '../../components/Prompt';
 import { useFormik } from 'formik';
+import { FiSearch } from 'react-icons/fi';
 import ModalTemplate from '../../components/ModalTemplate';
+import Pagination from '../../components/pagination';
 import { useAddStudentToSection } from '../../services/query/sections';
 const SectionInner = () => {
+    const [search, setSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(20);
   const params = useParams();
   const navigate = useNavigate();
   const { id } = params;
@@ -67,6 +73,33 @@ const SectionInner = () => {
     },
   });
 
+    const currentData = useMemo(() => {
+     if (sectionStudents) {
+      const firstPageIndex = (currentPage - 1) * pageSize;
+      const lastPageIndex = firstPageIndex + pageSize;
+      return [...sectionStudents].slice(firstPageIndex, lastPageIndex);
+    }
+    return [];
+  }, [sectionStudents,currentPage,pageSize]);
+
+    const keys = ['student_id','student_name']
+  const handleFilterData = (param) => {
+    if (isEmpty(param)) {
+      return currentData;
+    }
+  
+    let filtered = currentData.filter((item) => {
+      for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
+          return true;
+        }
+      }
+      return false;
+    });
+
+    return filtered;
+  };
   // add students from csv
  const {mutate:addAllStudents,data,isLoading:isLoadingAddAll} = useAddAllStudentsToSection({
   onSuccess:(res)=>{
@@ -215,11 +248,14 @@ const SectionInner = () => {
     <Fragment>
       {/* <Text>{temp}</Text> */}
       <Flex justifyContent={'space-between'} alignItems={'center'}>
-      <IoIosArrowBack
+        <Box mr={5}>
+       <IoIosArrowBack
             size={24}
             cursor="pointer"
             onClick={() => navigate(-1)}
           />
+        </Box>
+          
         <input
           ref={inputFile}
           onChange={(e) => handleFileSelect(e)}
@@ -228,16 +264,34 @@ const SectionInner = () => {
           // multiple={false}
         />
         {/* <Text m={'10px'}>Upload CSV file to add Students</Text> */}
-        <Flex flexWrap={'wrap'}>
+        <Flex flexWrap={'wrap'} alignItems={'center'}>
         <Button onClick={onButtonClick} m={1}>Add CSV file to add students </Button>
         <Button m={1} onClick={addStudentModal.onOpen}> add student</Button>
+         <Box maxW={['100%', '50%']} my={'10px'}>
+          <InputGroup>
+            <InputLeftElement
+              pointerEvents='none'
+              color='gray.300'
+              fontSize='1.2em'
+            />
+
+            <Input
+              placeholder='Search...'
+              onChange={(e) => {
+                setSearch(e.target.value);
+              }}
+              value={search}
+            />
+            <InputLeftElement children={<FiSearch color='green.500' />} />
+          </InputGroup>
+        </Box>
         </Flex>
       </Flex>
 
       <Box my={'20px'}>
         <TableTemplate
         columns={studentsSectionTableHeader}
-        data={sectionStudents}
+        data={handleFilterData(search)}
         actions={[
           {
             aria_label: 'View ',
@@ -262,6 +316,32 @@ const SectionInner = () => {
         isLoading={isLoadingSectionStudents}
         emptyState={<EmptyState message={'No Students in this section yet'}/>}
         />
+         <Flex w="100%" paddingTop="24px">
+          <Flex flex={1}></Flex>
+          <Select
+            w="190px"
+            defaultValue={20}
+            onChange={(e) => {
+              setPageSize(parseInt(e.target.value));
+              setCurrentPage(1);
+            }}
+          >
+            <option value={10}>10 Items Per Page</option>
+            <option value={20}>20 Items Per Page</option>
+            <option value={50}>50 Items Per Page</option>
+            <option value={100}>100 Items Per Page</option>
+          </Select>
+          <Pagination
+            currentPage={currentPage}
+            totalCount={
+              isEmpty(search)
+                ? sectionStudents?.length || 0
+                : handleFilterData(search).length
+            }
+            pageSize={pageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+          />
+        </Flex>
          {/* {
         <TableContainer>
 
