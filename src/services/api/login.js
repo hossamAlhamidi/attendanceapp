@@ -1,5 +1,6 @@
 import { 
-    LOGIN
+    LOGIN,
+    LOGOUT
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -13,4 +14,8 @@ import {
       return res.data
     }
 
- 
+    export const logoutInstructor = async ()=>{
+      const res = await axiosInstance.post(baseUrl+LOGOUT)
+  
+      return res.data
+    }

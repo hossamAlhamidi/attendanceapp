@@ -4,7 +4,7 @@
  import { Navigate } from 'react-router-dom';
 //  import { StudentInfo } from '../pages/Students/StudentInfo';
 const {LOGIN,SIGNUP} = PUBLIC_PATHS;
-const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION,INSTRUCTORS,DASHBOARD} = PRIVATE_PATHS
+const {SECTIONS,COURSES,SECTIONS_INNER,STUDENTS,STUDENT,ADD_SECTION,INSTRUCTORS,DASHBOARD,INSTRUCTOR_PROFILE} = PRIVATE_PATHS
 
 const Dashboard = WithSuspense(
   lazy(() => import('../pages/dashboard'))
@@ -37,6 +37,9 @@ const Dashboard = WithSuspense(
   const StudentInfo = WithSuspense(
     lazy(() => import('../pages/Students/StudentInfo'))
   );
+  const InstructorProfile = WithSuspense(
+    lazy(() => import('../pages/instructorProfile/index'))
+  );
 
 
   export const PUBLIC_ROUTES = [
@@ -58,6 +61,7 @@ const Dashboard = WithSuspense(
     { path: SECTIONS_INNER, element: <SectionInner /> },
     { path: STUDENTS, element: <Students /> },
     { path: STUDENT, element: <StudentInfo /> },
+    { path: INSTRUCTOR_PROFILE, element: <InstructorProfile /> },
     // { path: '*', element: <Navigate to="/dashboard" replace /> },
   ]
 

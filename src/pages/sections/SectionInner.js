@@ -29,6 +29,7 @@ import {
   Icon,
   useDisclosure
 } from '@chakra-ui/react';
+import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
 import { AiOutlineEye } from 'react-icons/ai';
 import { useGetAllSectionStudents } from '../../services/query/sections';
@@ -44,12 +45,15 @@ import { FiSearch } from 'react-icons/fi';
 import ModalTemplate from '../../components/ModalTemplate';
 import Pagination from '../../components/pagination';
 import { useAddStudentToSection } from '../../services/query/sections';
+import { useDeleteStudentFromSection } from '../../services/query/student';
 const SectionInner = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
+    const [deletedItem,setDeletedItem] = useState(null)
   const params = useParams();
   const navigate = useNavigate();
+  const confirmPrompt = useDisclosure();
   const { id } = params;
   const inputFile = useRef(null);
   const toast = useToast();
@@ -147,6 +151,43 @@ const SectionInner = () => {
       });
     }
   })
+
+  // delete 
+  const {mutate:deleteStudentFromSection,isLoading:isLoadingDelete} = useDeleteStudentFromSection({
+    onSuccess:(res)=>{
+      console.log(res,'deleted')
+      confirmPrompt.onClose();
+      refetch()
+      toast({
+        title: 'Deleted',
+        description: 'Student is deleted from this section',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+    onError:(err)=>{
+      toast({
+        title: 'Not Deleted',
+        description: err?.response?.data?.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  })
+
+  const handleCloseDeleteModal = () => {
+    setDeletedItem(null);
+    confirmPrompt.onClose();
+  };
+  const handleDelete = (body)=>{
+    deleteStudentFromSection(body)
+ 
+  }
+
  const initValues ={
   student_id: '',
   section_id: id,
@@ -174,7 +215,7 @@ const SectionInner = () => {
     }
     let temp = ''
     // Validate the file being uploaded
-    const supportedIndicatorFileExtensions = ['xls','txt','csv','xlsx'];
+    const supportedIndicatorFileExtensions = ['csv'];
     const fileName = inputFile.current?.files?.[0].name;
     const fileExtention =
       fileName?.substring(fileName?.lastIndexOf('.') + 1) || '';
@@ -312,6 +353,19 @@ const SectionInner = () => {
               }),
            
           },
+          {
+            aria_label: 'Delete student',
+            icon: <Icon as={CgTrashEmpty} color={'red'} />,
+            onPress: (item) => {
+              console.log(item,"item")
+              setDeletedItem({
+                student_id:item?.student_id,
+                section_id:item?.section_id,
+              })
+
+              confirmPrompt.onOpen();
+            },
+          },
          ]}
         isLoading={isLoadingSectionStudents}
         emptyState={<EmptyState message={!search?`No Students in this section yet`:`No results`}/>}
@@ -342,44 +396,7 @@ const SectionInner = () => {
             onPageChange={(page) => setCurrentPage(page)}
           />
         </Flex>
-         {/* {
-        <TableContainer>
-
-          <Table variant='simple'>
-            <TableCaption>List of all students</TableCaption>
-            <Thead>
-              <Tr>
-                <Th> </Th>
-                <Th> id</Th>
-                <Th> Name</Th>
-                <Th> email</Th>
-                <Th isNumeric>num of absence</Th>
-                <Th isNumeric>absence percentage</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {
-                !isLoadingSectionStudents&&!isEmpty(sectionStudents)&&sectionStudents.map((student,index)=>{
-                  return (
-                    <Tr key={student.student_id}>
-                     <Td>{index+1}</Td>
-                    <Td>{student.student_id}</Td>
-                    <Td>{student.student_name}</Td>
-                    <Td>{student.email}</Td>
-                    <Td isNumeric>{student.number_of_absence}</Td>
-                    <Td isNumeric>{student.absence_percentage}</Td>
-                  </Tr>
-                  )
-                })
-              }
-             
-             
-            </Tbody>
-         
-          </Table>
-        </TableContainer>
-
-          } */}
+       
       </Box>
 
       <ModalTemplate isOpen={addStudentModal.isOpen} onClose={addStudentModal.onClose} title={'Add Course'} >
@@ -436,6 +453,38 @@ const SectionInner = () => {
     title={promptErrMsg}
     type={'success'}
   />
+
+<Prompt
+        isOpen={confirmPrompt.isOpen}
+        onClose={() => {
+          handleCloseDeleteModal();
+        }}
+        title={`Are you sure you want to delete this record id: ${deletedItem?.student_id}?`}
+        buttons={[
+          {
+            label: 'Delete',
+            type: 'danger',
+            onPress: () => {
+              handleDelete(deletedItem);
+            },
+            styles: {
+              paddingX: 50,
+            },
+            isLoading: isLoadingDelete,
+          },
+          {
+            label: 'Cancel',
+            type: 'secondary',
+            onPress: () => {
+              handleCloseDeleteModal();
+            },
+            styles: {
+              paddingX: 50,
+            },
+          },
+        ]}
+        type={'error'}
+      />
     </Fragment>
   );
 };

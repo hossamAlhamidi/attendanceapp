@@ -1,6 +1,6 @@
 import { useQuery ,useMutation} from 'react-query';
-import { GET_SECTIONS,GET_ALL_SECTION_STUDENTS, ADD_SECTION,ADD_ALL_STUDENTS_TO_SECTION,ADD_STUDENT_TO_SECTION,GET_INSTRUCTOR_SECTIONS } from '../queryKeys';
-import { getAllSections,getAllSectionStudents,addSection,addAllStudentsToSection,addStudentToSection,getInstructorSections } from '../api/sections';
+import { GET_SECTIONS,GET_ALL_SECTION_STUDENTS, ADD_SECTION,ADD_ALL_STUDENTS_TO_SECTION,ADD_STUDENT_TO_SECTION,GET_INSTRUCTOR_SECTIONS,DELETE_SECTION } from '../queryKeys';
+import { getAllSections,getAllSectionStudents,addSection,addAllStudentsToSection,addStudentToSection,getInstructorSections,deleteSection } from '../api/sections';
 
 export const useGetAllSections = (options) => {
   const { data, isLoading, refetch } = useQuery(
@@ -57,4 +57,14 @@ export const useAddAllStudentsToSection = (options)=>{
   });
 
   return {mutate,data,isLoading}
+}
+
+export const useDeleteSection = (options)=>{
+  const {data,isLoading,mutate} = useMutation(deleteSection,
+      {
+          mutationKey:[DELETE_SECTION],
+          ...options
+      }
+  )
+  return {data,isLoading,mutate}
 }

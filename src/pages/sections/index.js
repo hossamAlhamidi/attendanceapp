@@ -13,6 +13,7 @@ import {
   Heading,
   CardBody,
   Text,
+  useToast,
   Flex,
   useDisclosure,
   Select,
@@ -33,13 +34,19 @@ import { sectionTableHeader } from '../../data/section.header';
 import { useNavigate } from 'react-router-dom';
 import Pagination from '../../components/pagination';
 import { isEmpty } from '../../components/ModalTemplate';
+import { useDeleteSection } from '../../services/query/sections';
+import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
+import Prompt from '../../components/Prompt';
 const Sections = () => {
   const navigate = useNavigate()
   const [search,setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const toast = useToast()
+  const confirmPrompt = useDisclosure();
+  const [deletedItem,setDeletedItem] = useState(null)
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const {data,isLoading,refetch} = useGetAllSections({
+  const {data,isLoading,refetch:getAllSections} = useGetAllSections({
     onSuccess:(res)=>{
       console.log(res,'success')
     },
@@ -80,6 +87,40 @@ const Sections = () => {
     return filtered;
   };
  
+    // delete section 
+    const {mutate:deleteSection,isLoading:isLoadingDelete} = useDeleteSection({
+      onSuccess:(res)=>{
+        console.log(res,'deleted')
+        confirmPrompt.onClose();
+        getAllSections()
+        toast({
+          title: 'Deleted',
+          description: 'Section has been Deleted',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+      onError:(err)=>{
+        toast({
+          title: 'Not Deleted',
+          description: err?.response?.data?.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+    })
+    const handleCloseDeleteModal = () => {
+      setDeletedItem(null);
+      confirmPrompt.onClose();
+    };
+    const handleDelete = (id)=>{
+      deleteSection(id)
+   
+    }
   return (
     <Fragment>
         <Flex alignItems={'center'} justifyContent={'space-between'} my={5}>
@@ -130,6 +171,16 @@ const Sections = () => {
                     }),
                  
                 },
+                {
+                  aria_label: 'Delete Section',
+                  icon: <Icon as={CgTrashEmpty} color={'red'} />,
+                  onPress: (item) => {
+                    
+                    setDeletedItem(item.section_id)
+ 
+                    confirmPrompt.onOpen();
+                  },
+                },
                ]}
                emptyState={<EmptyState message={!search?`No Sections added yet`:`No results`}/>}
               />
@@ -169,7 +220,37 @@ const Sections = () => {
 
         
 
-         
+      <Prompt
+        isOpen={confirmPrompt.isOpen}
+        onClose={() => {
+          handleCloseDeleteModal();
+        }}
+        title={`Are you sure you want to delete this record id:${deletedItem}?`}
+        buttons={[
+          {
+            label: 'Delete',
+            type: 'danger',
+            onPress: () => {
+              handleDelete(deletedItem);
+            },
+            styles: {
+              paddingX: 50,
+            },
+            isLoading: isLoadingDelete,
+          },
+          {
+            label: 'Cancel',
+            type: 'secondary',
+            onPress: () => {
+              handleCloseDeleteModal();
+            },
+            styles: {
+              paddingX: 50,
+            },
+          },
+        ]}
+        type={'error'}
+      />
        
           
     </Fragment>

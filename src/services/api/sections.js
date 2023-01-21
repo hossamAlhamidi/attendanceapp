@@ -4,7 +4,8 @@ GET_ALL_SECTION_STUDENTS_URL,
 ADD_SECTION,
 ADD_ALL_STUDENTS_TO_SECTION,
 ADD_STUDENT_TO_SECTION,
-GET_INSTRUCTOR_SECTIONS
+GET_INSTRUCTOR_SECTIONS,
+DELETE_SECTION
 } from '../apiUrl';
 import axiosInstance, { baseUrl } from '../config/axiosInstance';
 import axios from 'axios';
@@ -38,4 +39,10 @@ export const addStudentToSection = async (body)=>{
 export const addAllStudentsToSection = async(body)=>{
   const res = await axiosInstance.post(baseUrl+ADD_ALL_STUDENTS_TO_SECTION,body)
   return res.body;
+}
+
+export const deleteSection = async(id)=>{
+  const res = await axiosInstance.delete(baseUrl+DELETE_SECTION(id))
+
+  return res.data
 }

@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
-import { GET_STUDENT,UPDATE_STUDENT,GET_STUDENT_BY_ID,GET_ABSENCE_FOR_STUDENT,DELETE_ABSENCE } from '../queryKeys';
-import { getStudentById,updateStudent , getStudentByIdAlt,getAbsenceForStudent,deleteAbsence} from '../api/students';
+import { GET_STUDENT,UPDATE_STUDENT,GET_STUDENT_BY_ID,GET_ABSENCE_FOR_STUDENT,DELETE_ABSENCE,DELETE_STUDENT_FROM_SECTION } from '../queryKeys';
+import { getStudentById,updateStudent , getStudentByIdAlt,getAbsenceForStudent,deleteAbsence,deleteStudentFromSection} from '../api/students';
 
 
 export const useGetStudentById = (options)=>{
@@ -44,6 +44,16 @@ export const useDeleteAbsence = (options)=>{
     const {data,isLoading,mutate} = useMutation(deleteAbsence,
         {
             mutationKey:[DELETE_ABSENCE],
+            ...options
+        }
+    )
+    return {data,isLoading,mutate}
+}
+
+export const useDeleteStudentFromSection = (options)=>{
+    const {data,isLoading,mutate} = useMutation(deleteStudentFromSection,
+        {
+            mutationKey:[DELETE_STUDENT_FROM_SECTION],
             ...options
         }
     )

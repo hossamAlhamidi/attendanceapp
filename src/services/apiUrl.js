@@ -16,3 +16,8 @@ export const LOGIN = 'instructor/login'
 export const GET_INSTRUCTOR_SECTIONS = (id)=>`instructor/sections/${id}`
 export const DELETE_COURSE = (id)=>`courses/${id}`
 export const DELETE_INSTRUCTOR = (id)=>`instructor/${id}`
+export const DELETE_STUDENT_FROM_SECTION = ({student_id,section_id})=>`students/sections/?student_id=${student_id}&section_id=${section_id}`
+export const LOGOUT = 'instructor/logout'
+export const GET_INSTRUCTOR = 'instructor/'
+export const UPDATE_INSTRUCTOR = 'instructor/'
+export const DELETE_SECTION = (id)=>`sections/${id}`

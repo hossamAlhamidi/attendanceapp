@@ -4,7 +4,6 @@ import {
   Flex,
   Avatar,
   HStack,
-  Link,
   IconButton,
   Button,
   Menu,
@@ -14,41 +13,75 @@ import {
   MenuDivider,
   useDisclosure,
   useColorModeValue,
+  useToast,
   Stack,
   Text,
 } from '@chakra-ui/react';
 import { useQueryClient } from 'react-query';
+import { useLogoutInstructor } from '../services/query/login';
 // import { useLogOut } from '../../utils/helpers';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 const Links = ['Dashboard', 'Projects', 'Team'];
 
-const NavLink = ({ children }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={'md'}
-    _hover={{
-      textDecoration: 'none',
-      bg: useColorModeValue('gray.200', 'gray.700'),
-    }}
-    href={'#'}
-  >
-    {children}
-  </Link>
-);
+// const NavLink = ({ children }) => (
+//   <Link
+//     px={2}
+//     py={1}
+//     rounded={'md'}
+//     _hover={{
+//       textDecoration: 'none',
+//       bg: useColorModeValue('gray.200', 'gray.700'),
+//     }}
+//     href={'#'}
+//   >
+//     {children}
+//   </Link>
+// );
 
 function Navbar() {
-   const useLogOut = () => {
-    const navigate = useNavigate();
-    const queryClient = useQueryClient();
-    return () => {
+  const toast = useToast()
+  const {mutate,isLoading,refetch} = useLogoutInstructor({
+    onSuccess:(res)=>{
       localStorage.removeItem('user');
       queryClient.clear();
       setTimeout(() => {
         navigate('/login');
         // window.location.reload()
         // window.location.reload(); // removing this because WS logout toast wasn't persisting between authenticated pages and no-auth pages
-      }, 500);
+      }, 300);
+      toast({
+        title: 'Success',
+        description:"You have been logged out",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+    onError:(err)=>{
+      console.log(err)
+      toast({
+        title: 'error',
+        description:"something went wrong",
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  })
+   const useLogOut = () => {
+    const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    return () => {
+      mutate()
+      // localStorage.removeItem('user');
+      // queryClient.clear();
+      // setTimeout(() => {
+      //   navigate('/login');
+      //   // window.location.reload()
+      //   // window.location.reload(); // removing this because WS logout toast wasn't persisting between authenticated pages and no-auth pages
+      // }, 500);
     };
   };
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -113,7 +146,7 @@ function Navbar() {
                 <Avatar size={'sm'} src={'/img/moha.png'} />
               </MenuButton>
               <MenuList>
-                <MenuItem >Edit Profile</MenuItem>
+              <Link to={'instructor'}><MenuItem >Edit Profile</MenuItem></Link>
                 <MenuItem onClick={logOut}  color={'red'}>
                   Sign Out
                 </MenuItem>

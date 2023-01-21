@@ -335,7 +335,7 @@ const Courses = () => {
         onClose={() => {
           handleCloseDeleteModal();
         }}
-        title={'Are you sure you want to delete this record?'}
+        title={`Are you sure you want to delete this record id:${deletedItem}?`}
         buttons={[
           {
             label: 'Delete',

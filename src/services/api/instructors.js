@@ -1,7 +1,9 @@
 import { 
     GET_INSTRUCTORS,
     ADD_INSTRUCTOR,
-    DELETE_INSTRUCTOR
+    DELETE_INSTRUCTOR,
+    GET_INSTRUCTOR,
+    UPDATE_INSTRUCTOR
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -25,3 +27,16 @@ import {
 
       return res.data
   }
+
+  // only one instructor
+  export const getInstructor = async ()=>{
+    const res = await axiosInstance.get(baseUrl+GET_INSTRUCTOR)
+  
+    return res.data
+  }
+
+  export const updateInstructor = async (body)=>{
+    const res = await axiosInstance.put(baseUrl+UPDATE_INSTRUCTOR,body)
+
+    return res.data;
+}
