@@ -67,7 +67,7 @@ const Sections = () => {
     //     item[key]?.toString().toLowerCase()?.includes(param.toLowerCase()),
     //   ),
     // );
-    let filtered = currentData.filter((item) => {
+    let filtered = data?.filter((item) => {
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
         if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
@@ -108,7 +108,7 @@ const Sections = () => {
 
               <TableTemplate
                columns={sectionTableHeader}
-               data={handleFilterData(search)}
+               data={isEmpty(search)?currentData:handleFilterData(search)}
                isLoading={isLoading}
                actions={[
                 {
@@ -131,7 +131,7 @@ const Sections = () => {
                  
                 },
                ]}
-               emptyState={<EmptyState message={'No sections'}/>}
+               emptyState={<EmptyState message={!search?`No Sections added yet`:`No results`}/>}
               />
                <Flex w="100%" paddingTop="24px">
           <Flex flex={1}></Flex>

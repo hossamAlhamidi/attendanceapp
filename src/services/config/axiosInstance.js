@@ -18,10 +18,14 @@ const axiosInstance = axios.create({
     // }
   
     // get the access token from LS
-    // const { access } = JSON.parse(localStorage.getItem('user'));
-    request.headers.Authorization = `Bearer`;
+    const { token } = JSON.parse(localStorage.getItem('user')) || ""
+    request.headers.Authorization = `Bearer ${token}` || '';
     return request;
   };
+
+  // export const getUserTokens = () => {
+  //   return JSON.parse(localStorage.getItem('user')) || {};
+  // };
   
   const onRequestError = (error) => {
     return Promise.reject(error);

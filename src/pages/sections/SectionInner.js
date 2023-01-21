@@ -88,7 +88,7 @@ const SectionInner = () => {
       return currentData;
     }
   
-    let filtered = currentData.filter((item) => {
+    let filtered = sectionStudents?.filter((item) => {
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
         if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
@@ -291,7 +291,7 @@ const SectionInner = () => {
       <Box my={'20px'}>
         <TableTemplate
         columns={studentsSectionTableHeader}
-        data={handleFilterData(search)}
+        data={isEmpty(search)?currentData:handleFilterData(search)}
         actions={[
           {
             aria_label: 'View ',
@@ -314,7 +314,7 @@ const SectionInner = () => {
           },
          ]}
         isLoading={isLoadingSectionStudents}
-        emptyState={<EmptyState message={'No Students in this section yet'}/>}
+        emptyState={<EmptyState message={!search?`No Students in this section yet`:`No results`}/>}
         />
          <Flex w="100%" paddingTop="24px">
           <Flex flex={1}></Flex>

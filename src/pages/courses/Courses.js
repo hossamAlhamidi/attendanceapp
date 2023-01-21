@@ -19,8 +19,10 @@ import {
   useDisclosure,
   Label,
   useToast,
-  Checkbox,CheckboxGroup
+  Checkbox,CheckboxGroup,
+  Icon
 } from '@chakra-ui/react';
+import Prompt from '../../components/Prompt';
 import { isEmpty } from '../../components/ModalTemplate';
 import Pagination from '../../components/pagination';
 import EmptyState from '../../components/EmptyState'
@@ -32,11 +34,15 @@ import { useFormik } from 'formik';
 import { useAddCourse } from '../../services/query/courses';
 import TableTemplate from '../../components/Table';
 import { courseTableHeader } from '../../data/courses.headers';
+import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
+import { useDeleteCourse } from '../../services/query/courses';
 const Courses = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const toast = useToast()
+  const confirmPrompt = useDisclosure();
+  const [deletedItem,setDeletedItem] = useState(null)
   const initValues ={
     course_name: '',
     course_id: '',
@@ -72,7 +78,7 @@ const Courses = () => {
       return currentData;
     }
   
-    let filtered = currentData.filter((item) => {
+    let filtered = coursesData?.filter((item) => {
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
         if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
@@ -113,6 +119,41 @@ const Courses = () => {
     }
   })
 
+  // delete course 
+  const {mutate:deleteCourse,isLoading:isLoadingDelete} = useDeleteCourse({
+    onSuccess:(res)=>{
+      console.log(res,'deleted')
+      confirmPrompt.onClose();
+      getAllCourses()
+      toast({
+        title: 'Deleted',
+        description: 'Course has been Deleted',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+    onError:(err)=>{
+      toast({
+        title: 'Not Deleted',
+        description: err?.response?.data?.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  })
+  const handleCloseDeleteModal = () => {
+    setDeletedItem(null);
+    confirmPrompt.onClose();
+  };
+  const handleDelete = (id)=>{
+    deleteCourse(id)
+ 
+  }
+
   const formik = useFormik({
     initialValues: initialValues ,
     onSubmit: (values) => {
@@ -151,10 +192,23 @@ const Courses = () => {
 
               <TableTemplate
               columns={courseTableHeader}
-              data = {handleFilterData(search)}
+              data = {isEmpty(search)?currentData:handleFilterData(search)}
               isLoading={isLoadingCourses}
-              actions={[]}
-              emptyState={<EmptyState message={'No courses'}/>}
+              emptyState={<EmptyState message={!search?`No courses added yet`:`No results`}/>}
+              actions = {
+                [
+                  {
+                    aria_label: 'Delete Course',
+                    icon: <Icon as={CgTrashEmpty} color={'red'} />,
+                    onPress: (item) => {
+                      
+                      setDeletedItem(item.course_id)
+   
+                      confirmPrompt.onOpen();
+                    },
+                  },
+                ]
+              }
               />
 
          <Flex w="100%" paddingTop="24px">
@@ -275,6 +329,38 @@ const Courses = () => {
           </Flex>
         </form>
       </ModalTemplate>
+
+      <Prompt
+        isOpen={confirmPrompt.isOpen}
+        onClose={() => {
+          handleCloseDeleteModal();
+        }}
+        title={'Are you sure you want to delete this record?'}
+        buttons={[
+          {
+            label: 'Delete',
+            type: 'danger',
+            onPress: () => {
+              handleDelete(deletedItem);
+            },
+            styles: {
+              paddingX: 50,
+            },
+            isLoading: isLoadingDelete,
+          },
+          {
+            label: 'Cancel',
+            type: 'secondary',
+            onPress: () => {
+              handleCloseDeleteModal();
+            },
+            styles: {
+              paddingX: 50,
+            },
+          },
+        ]}
+        type={'error'}
+      />
     </Fragment>
   );
 };

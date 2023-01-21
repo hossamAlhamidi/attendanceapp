@@ -36,11 +36,16 @@ import { instructorsTableHeader } from '../../data/instructors.headers';
 import EmptyState from '../../components/EmptyState';
 import { useAddInstructor } from '../../services/query/instructors';
 import Pagination from '../../components/pagination';
+import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { isEmpty } from '../../components/ModalTemplate';
+import Prompt from '../../components/Prompt';
+import { useDeleteInstructor } from '../../services/query/instructors';
 const Instructors = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const confirmPrompt = useDisclosure();
+  const [deletedItem,setDeletedItem] = useState(null)
     const navigate = useNavigate()
     const toast = useToast()
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -65,7 +70,7 @@ const Instructors = () => {
        return currentData;
      }
    
-     let filtered = currentData.filter((item) => {
+     let filtered = instructors?.filter((item) => {
        for (let i = 0; i < keys.length; i++) {
          let key = keys[i];
          if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
@@ -105,6 +110,41 @@ const Instructors = () => {
             });
           }
     })
+
+    const {mutate:deleteInstructor,isLoading:isLoadingDelete} = useDeleteInstructor({
+      onSuccess:(res)=>{
+        console.log(res,'deleted')
+        confirmPrompt.onClose();
+        getAllInstructors()
+        toast({
+          title: 'Deleted',
+          description: 'Instructor has been Deleted',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+      onError:(err)=>{
+        toast({
+          title: 'Not Deleted',
+          description: err?.response?.data?.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+    })
+
+    const handleCloseDeleteModal = () => {
+      setDeletedItem(null);
+      confirmPrompt.onClose();
+    };
+    const handleDelete = (id)=>{
+       deleteInstructor(id)
+   
+    }
 
     const initialValues = {
         instructor_id:"",
@@ -150,30 +190,23 @@ const Instructors = () => {
 
               <TableTemplate
         columns={instructorsTableHeader}
-        data={handleFilterData(search)}
-        actions={[
-        //   {
-        //     aria_label: 'View ',
-        //     icon: (
-        //       <Icon
-        //         as={AiOutlineEye}
-        //         h={4}
-        //         w={4}
-        //         color={useColorModeValue(
-        //           'lightMode.primary.default',
-        //           'darkMode.secondary.gray'
-        //         )}
-        //       />
-        //     ),
-        //     onPress: (item) =>
-        //       navigate(`/students/${item.student_id}`, {
-        //         // state: { type: item.organization_type },
-        //       }),
-           
-        //   },
-         ]}
+        data={isEmpty(search)?currentData:handleFilterData(search)}
+        actions = {
+          [
+            {
+              aria_label: 'Delete Course',
+              icon: <Icon as={CgTrashEmpty} color={'red'} />,
+              onPress: (item) => {
+                console.log(item.instructor_id,"ins")
+                setDeletedItem(item.instructor_id)
+
+                confirmPrompt.onOpen();
+              },
+            },
+          ]
+        }
         isLoading={isLoadingInstructor}
-        emptyState={<EmptyState message={'No Instructors added'}/>}
+        emptyState={<EmptyState message={!search?`No Instructor Added yet`:`No results`}/>}
         />
 
 <Flex w="100%" paddingTop="24px">
@@ -262,6 +295,38 @@ const Instructors = () => {
           </Flex>
         </form>
       </ModalTemplate>
+
+      <Prompt
+        isOpen={confirmPrompt.isOpen}
+        onClose={() => {
+          handleCloseDeleteModal();
+        }}
+        title={'Are you sure you want to delete this record?'}
+        buttons={[
+          {
+            label: 'Delete',
+            type: 'danger',
+            onPress: () => {
+              handleDelete(deletedItem);
+            },
+            styles: {
+              paddingX: 50,
+            },
+            isLoading: isLoadingDelete,
+          },
+          {
+            label: 'Cancel',
+            type: 'secondary',
+            onPress: () => {
+              handleCloseDeleteModal();
+            },
+            styles: {
+              paddingX: 50,
+            },
+          },
+        ]}
+        type={'error'}
+      />
     </Fragment>
   )
 }

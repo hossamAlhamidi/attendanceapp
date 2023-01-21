@@ -1,6 +1,7 @@
 import { 
     GET_INSTRUCTORS,
-    ADD_INSTRUCTOR
+    ADD_INSTRUCTOR,
+    DELETE_INSTRUCTOR
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -19,4 +20,8 @@ import {
       return res.data
     }
 
- 
+    export const deleteInstructor = async(id)=>{
+      const res = await axiosInstance.delete(baseUrl+DELETE_INSTRUCTOR(id))
+
+      return res.data
+  }

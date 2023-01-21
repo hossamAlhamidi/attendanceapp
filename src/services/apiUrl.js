@@ -14,3 +14,5 @@ export const GET_ABSENCE_FOR_STUDENT =(id)=> `student/absence/${id}`
 export const DELETE_ABSENCE = ({student_id,section_id,absence_date})=>`student/absence/?student_id=${student_id}&section_id=${section_id}&absence_date=${absence_date}`
 export const LOGIN = 'instructor/login'
 export const GET_INSTRUCTOR_SECTIONS = (id)=>`instructor/sections/${id}`
+export const DELETE_COURSE = (id)=>`courses/${id}`
+export const DELETE_INSTRUCTOR = (id)=>`instructor/${id}`

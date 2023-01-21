@@ -139,9 +139,7 @@ const StudentInfo = () => {
   };
   const handleDelete = (body)=>{
     deleteAbsence(body)
-    // student_id:item?.student_id,
-    // section_id:item?.section_id,
-    // absence_date:item?.absence_date
+ 
   }
   // useEffect(()=>{
   //  mutate(id)
@@ -370,7 +368,7 @@ const StudentInfo = () => {
                       actions = {
                         [
                           {
-                            aria_label: 'Delete Cognna Admins',
+                            aria_label: 'Delete absence',
                             icon: <Icon as={CgTrashEmpty} color={'red'} />,
                             onPress: (item) => {
                               console.log(item,"item")
@@ -455,7 +453,7 @@ const StudentInfo = () => {
                     actions = {
                       [
                         {
-                          aria_label: 'Delete Cognna Admins',
+                          aria_label: 'Delete absence',
                           icon: <Icon as={CgTrashEmpty} color={'red'} />,
                           onPress: (item) => {
                             console.log(item,"item")

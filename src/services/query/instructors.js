@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query";
-import { GET_INSTRUCTORS ,ADD_INSTRUCTOR} from "../queryKeys";
-import { getInstructors,addInstructor } from "../api/instructors";
+import { GET_INSTRUCTORS ,ADD_INSTRUCTOR,DELETE_INSTRUCTOR} from "../queryKeys";
+import { getInstructors,addInstructor,deleteInstructor } from "../api/instructors";
 
 
 export const useGetAllInstructor = (options)=>{
@@ -24,3 +24,12 @@ export const useAddInstructor = (options)=>{
     return {mutate,data,isLoading}
 }
 
+export const useDeleteInstructor = (options)=>{
+    const {data,isLoading,mutate} = useMutation(deleteInstructor,
+        {
+            mutationKey:[DELETE_INSTRUCTOR],
+            ...options
+        }
+    )
+    return {data,isLoading,mutate}
+}

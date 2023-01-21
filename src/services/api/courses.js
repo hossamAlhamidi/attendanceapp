@@ -1,6 +1,7 @@
 import { 
     GET_ALL_COURSES,
-    ADD_COURSE
+    ADD_COURSE,
+    DELETE_COURSE
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -13,6 +14,12 @@ import {
 
     export const addCourse = async (body)=>{
         const res = await axiosInstance.post(baseUrl+ADD_COURSE,body)
+
+        return res.data
+    }
+
+    export const deleteCourse = async(id)=>{
+        const res = await axiosInstance.delete(baseUrl+DELETE_COURSE(id))
 
         return res.data
     }
