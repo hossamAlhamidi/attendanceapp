@@ -137,16 +137,16 @@ const Sections = () => {
                     }),
                  
                 },
-                {
-                  aria_label: 'Delete Section',
-                  icon: <Icon as={CgTrashEmpty} color={'red'} />,
-                  onPress: (item) => {
+                // {
+                //   aria_label: 'Delete Section',
+                //   icon: <Icon as={CgTrashEmpty} color={'red'} />,
+                //   onPress: (item) => {
                     
-                    setDeletedItem(item.section_id)
+                //     setDeletedItem(item.section_id)
  
-                    confirmPrompt.onOpen();
-                  },
-                },
+                //     confirmPrompt.onOpen();
+                //   },
+                // },
                ]}
                emptyState={<EmptyState message={'No added sections'}/>}
               />

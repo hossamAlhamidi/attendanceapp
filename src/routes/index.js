@@ -28,7 +28,7 @@ const PublicRouteWrapper = () => {
   const Pages = () => {
     const user = localStorage.getItem('user');
     const location = useLocation();
-    return user ? (
+    return user &&Object.keys(JSON.parse(user)).includes('instructor_id') ? (
       <AuthPageLayout>
         <PrivateRouteWrapper key={location.pathname} />
       </AuthPageLayout>

@@ -26,7 +26,7 @@ import { isEmpty } from '../../components/ModalTemplate';
 import { IoIosArrowBack } from 'react-icons/io';
 import { HiLockClosed, HiLockOpen } from 'react-icons/hi';
 import { TbPencil } from 'react-icons/tb';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useUpdateStudent } from '../../services/query/student';
 import { useGetAbsenceForStudent } from '../../services/query/student';
@@ -61,6 +61,7 @@ const InstructorProfile = () => {
         })
     },
     onError:(err)=>{
+        Navigate(-1)
         console.log(err)
     },
     cacheTime: 0

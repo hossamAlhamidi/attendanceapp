@@ -60,6 +60,11 @@ function Navbar() {
     },
     onError:(err)=>{
       console.log(err)
+      localStorage.removeItem('user');
+      queryClient.clear();
+      setTimeout(() => {
+        navigate('/login');
+      }, 300);
       toast({
         title: 'error',
         description:"something went wrong",

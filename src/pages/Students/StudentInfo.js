@@ -71,6 +71,7 @@ const StudentInfo = () => {
         })
     },
     onError:(err)=>{
+       navigate(-1)
         console.log(err)
     },
     cacheTime: 0

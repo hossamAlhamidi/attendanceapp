@@ -24,7 +24,8 @@ import {
   FormLabel,
   useToast,
   RadioGroup,
-  Radio
+  Radio,
+  Spinner
 } from '@chakra-ui/react';
 import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
 import { ADD_SECTION,GET_SECTIONS } from '../../services/queryKeys';
@@ -35,15 +36,51 @@ import CustomSelect from '../../components/CustomeSelect';
 import { useAddSection } from '../../services/query/sections';
 import { useGetAllInstructor } from '../../services/query/instructors';
 import { useQueryClient } from 'react-query';
+import { useGetSectionById } from '../../services/query/sections';
 import { object } from 'yup';
-import { useNavigate } from 'react-router-dom';
-const AddSection = () => {
+import { useNavigate ,useLocation,useParams} from 'react-router-dom';
+import { useUpdateSection } from '../../services/query/sections';
+const EditSection = () => {
   const [isSameTime, setIsSameTime] = useState(true);
   const [isTutorial,setIsTutorial] = useState(false)
   const [isLab,setIsLab] = useState(false)
+  const [isChange,setIsChange]=useState(false)
+  const [isChangeTime,setIsChangeTime] = useState(false)
   const toast = useToast()
   const queryClient = useQueryClient();
   const navigate = useNavigate()
+  const location = useLocation()
+  const params = useParams()
+  const {id} = params||""
+  const { section } = location.state || '';
+  
+
+  if(isEmpty(section)){
+    navigate('/dashboard')
+  }
+
+  const {data:sectionInfo,isLoading:isLoadingSection,refetch:getSection}=useGetSectionById(id,{
+    onSuccess: (res) => {
+        // console.log(res, 'success');
+        setSectionDetails({
+          ...initValues,
+            section_id:res?.section_id,
+            course:res?.course_id,
+            course_name:res?.course_name,
+            instructor_name:res?.instructor_name,
+            instructor_id:res?.instructor_id,
+            selected_instructor:{label:res?.instructor_name,value:res?.instructor_id},
+            classroom:res?.classroom||"",
+            type:res.type,
+            time:res.time
+        })
+      },
+      onError: (err) => {
+        console.log(err, 'error');
+      },
+      cacheTime:0
+  })
+
   const { data:coursesData, isLoading:isLoadingCourses, refetch:getAllCourses } = useGetAllCourses({
     onSuccess: (res) => {
       // console.log(res, 'success');
@@ -52,6 +89,8 @@ const AddSection = () => {
       console.log(err, 'error');
     },
   });
+
+
 
   const { data:instructors, isLoading:isLoadingInstructor, refetch:getAllInstructors } = useGetAllInstructor({
     onSuccess: (res) => {
@@ -93,38 +132,63 @@ const AddSection = () => {
     return [];
   }, [coursesData]);
 
-  const {mutate:addSection,data,isLoading} = useAddSection({
+//   const {mutate:addSection,data,isLoading} = useAddSection({
+//     onSuccess:(res)=>{
+//       console.log(res,"success")
+//       toast({
+//         title: 'success',
+//         description: 'Your section has been added',
+//         status: 'success',
+//         duration: 5000,
+//         isClosable: true,
+//         position: 'top-right',
+//       });
+//       // queryClient.invalidateQueries([ADD_SECTION]);
+//       queryClient.refetchQueries({ queryKey: [GET_SECTIONS] })
+//       navigate("/sections")
+//     },
+//     onError:(err)=>{
+//       toast({
+//         title: 'Error',
+//         description: err?.response?.data?.message,
+//         status: 'error',
+//         duration: 5000,
+//         isClosable: true,
+//         position: 'top-right',
+//       });
+
+//     }
+//   })
+
+  const {mutate:updateSection,isLoading:isLoadingUpdate}=useUpdateSection({
     onSuccess:(res)=>{
-      console.log(res,"success")
       toast({
-        title: 'success',
-        description: 'Your section has been added',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-      // queryClient.invalidateQueries([ADD_SECTION]);
-      queryClient.refetchQueries({ queryKey: [GET_SECTIONS] })
-      navigate("/dashboard")
+                title: 'success',
+                description: 'section info is updated',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position: 'top-right',
+              });
+              queryClient.refetchQueries({ queryKey: [GET_SECTIONS] })
+              navigate("/dashboard")
     },
     onError:(err)=>{
       toast({
-        title: 'Error',
-        description: err?.response?.data?.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-
+                title: 'Error',
+                description: err?.response?.data?.message,
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+                position: 'top-right',
+              });
     }
   })
-
   const initValues = {
     section_id: '',
     course: '',
     course_name:"",
+    selected_instructor:"",
     instructor_id: '',
     instructor_name:"",
     classroom: '',
@@ -147,26 +211,28 @@ const AddSection = () => {
     wednesday_to:"",
     thursday_from:"",
     thursday_to:"",
-    tutorial_section_id:"",
-    tutorial_instructor_id:"",
-    tutorial_instructor_name:"",
-    tutorial_classroom:"",
+    // tutorial_section_id:"",
+    // tutorial_instructor_id:"",
+    // tutorial_instructor_name:"",
+    // tutorial_classroom:"",
     tutorial_day:"",
     tutorial_from:"",
     tutorial_to:"",
-    lab_section_id:"",
-    lab_instructor_id:"",
-    lab_instructor_name:"",
-    lab_classroom:"",
+    // lab_section_id:"",
+    // lab_instructor_id:"",
+    // lab_instructor_name:"",
+    // lab_classroom:"",
     lab_day:"",
     lab_from:"",
     lab_to:"",
   };
+  const [sectionDetails,setSectionDetails] = useState(initValues)
 
   const formik = useFormik({
-    initialValues: initValues,
+    initialValues: sectionDetails,
+    enableReinitialize: true,
     onSubmit: (values) => {
-        console.log(values,'values');
+        console.log(values);
         let obj = {
             section_id : values.section_id,
             course_id : values.course,
@@ -174,11 +240,12 @@ const AddSection = () => {
             instructor_id : values.instructor_id,
             instructor_name:values.instructor_name,
             classroom:values.classroom,
-            time:""
+            time:!isChangeTime?values.time:""
 
         }
+        if(isChangeTime){
         if(isSameTime){
-             for(let i = 0 ; i<values.days.length-1 ; i++){
+             for(let i = 0 ; i<values.days?.length-1 ; i++){
               obj.time += `"${values.days[i]}":"${values.from}-${values.to}",`
              }
              obj.time += `"${values.days[values.days.length-1]}":"${values.from}-${values.to}"`
@@ -196,33 +263,36 @@ const AddSection = () => {
           
           // addSection(obj)
         }
-        if(isTutorial){
-          obj.tutorial_section_id = formik.values.section_id?formik.values.section_id+1:""
-          obj.tutorial_instructor_id = values.tutorial_instructor_id
-          obj.tutorial_instructor_name = values.tutorial_instructor_name
-          obj.tutorial_classroom = values.tutorial_classroom
+        if(sectionDetails.type.toLowerCase()=='tutorial'){
+          // obj.tutorial_section_id = formik.values.section_id?formik.values.section_id+1:""
+          // obj.tutorial_instructor_id = values.tutorial_instructor_id
+          // obj.tutorial_instructor_name = values.tutorial_instructor_name
+          // obj.tutorial_classroom = values.tutorial_classroom
           obj.tutorial_day = values.tutorial_day
-          obj.tutorial_time = `"${values.tutorial_day}":"${values.tutorial_from}-${values.tutorial_to}"`
-          obj.tutorial_time = `{${obj.tutorial_time}}`
+          obj.time = `"${values.tutorial_day}":"${values.tutorial_from}-${values.tutorial_to}"`
+          obj.time = `{${obj.time}}`
         }
-        if(isLab){
-          obj.lab_section_id = formik.values.section_id?formik.values.section_id+2:""
-          obj.lab_instructor_id = values.lab_instructor_id
-          obj.lab_instructor_name = values.lab_instructor_name
-          obj.lab_classroom = values.lab_classroom
+        if(sectionDetails.type.toLowerCase()=='lab'){
+          // obj.lab_section_id = formik.values.section_id?formik.values.section_id+2:""
+          // obj.lab_instructor_id = values.lab_instructor_id
+          // obj.lab_instructor_name = values.lab_instructor_name
+          // obj.lab_classroom = values.lab_classroom
           obj.lab_day = values.lab_day
-          obj.lab_time = `"${values.lab_day}":"${values.lab_from}-${values.lab_to}"`
-          obj.lab_time = `{${obj.lab_time}}`
+          obj.time = `"${values.lab_day}":"${values.lab_from}-${values.lab_to}"`
+          obj.time = `{${obj.time}}`
         }
+      }
         console.log(obj,"obj")
-        addSection(obj)
+        updateSection(obj)
 
       // setInitialValues(initValues)
     },
   });
+  // console.log((formik.values?.time),'time')
   return (
     <FormikProvider value={formik}>
-    <Fragment>
+    { !isLoadingSection?
+        <Fragment>
       <Box mb={10}>
       <IoIosArrowBack
             size={24}
@@ -232,6 +302,7 @@ const AddSection = () => {
           />
       </Box>
    
+      {sectionDetails?.type?.toLowerCase()=='lecture'&&
       <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>
@@ -244,31 +315,47 @@ const AddSection = () => {
             placeholder='22356'
             size='md'
             mb={'10px'}
+            isDisabled
           />
         </Box>
 
+       
         <Box>
           <Text mb='8px'>Selected Course</Text>
-          <Field
-                className='custom-select'
-                name='course'
-                id='course'
-                options={courseOptions}
-                component={CustomSelect}
-                // setFieldTouched={setFieldTouched}
-                placeholder='Select...'
-                isMulti={false}
-                // menuShouldScrollIntoView
-                hideSelectedOptions
-                isSearchable
-                setIsTutorial={setIsTutorial}
-                setIsLab={setIsLab}
-              />
+          <Input
+            id='course'
+            name='course'
+            onChange={formik.handleChange}
+            value={formik.values.course?formik.values.course:""}
+            placeholder='SWE 466'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
         </Box>
 
-        <Box>
+        {
+          <Box>
+             <Flex justifyContent={'space-between'}>
           <Text mb='8px'>Selected Instructor</Text>
-          <Field
+           <Checkbox onChange={()=>setIsChange(!isChange)}>Change Instructor?</Checkbox>
+          </Flex>
+            {!isChange&&
+         <Box>
+         
+          <Input
+            id='instructor_name'
+            name='instructor_name'
+            onChange={formik.handleChange}
+            value={formik.values.instructor_name}
+            placeholder='hossam'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
+               </Box>
+}
+        {  isChange&&<Field
                 className='custom-select'
                 name='instructor_id'
                 id='instructor_id'
@@ -282,8 +369,9 @@ const AddSection = () => {
                 isSearchable
                 
               />
+        }
         </Box>
-
+}
         <Box>
           <Text mb='8px'>classroom </Text>
           <Input
@@ -297,8 +385,34 @@ const AddSection = () => {
           />
         </Box>
       </SimpleGrid>
+}
       {/* <Text>Time</Text> */}
-      <Card py={10} px={5} my={10}>
+      
+      {/* <Text> {JSON.stringify(Object.entries(formik.values?.time||{}).filter((item)=>item[1]!='-'))}</Text> */}
+    
+     
+      
+      {sectionDetails?.type?.toLowerCase()=='lecture'&&
+      <>
+        <Flex justifyContent={'space-between'}>
+      <Text mb='8px' mt={10}>Time </Text>
+      <Checkbox onChange={()=>setIsChangeTime(!isChangeTime)}>Change Time?</Checkbox>
+      </Flex>
+        <Flex flexWrap={'wrap'} >
+          {
+             Object.entries(formik.values?.time||{}).filter((item)=>item[1]=='-')?.length!=5?  Object.entries(formik.values?.time||{}).filter((item)=>item[1]!='-').map((item,i)=>{
+                return(
+                  <Flex key={i} my={2}>
+                   <Text fontWeight={'bold'} mr={2}>{item[0]+": "}</Text>
+                   <Text>{item[1]}</Text>
+                  </Flex>
+                )
+              })
+              :<Text fontWeight={'bold'}>No time determined yet</Text>
+          }
+        </Flex>
+     
+    { isChangeTime&& <Card py={10} px={5} my={10}>
         <Flex justifyContent={'space-between'}>
           <HStack justifyContent={'space-between'}>
             <Box textAlign={'center'}>
@@ -401,7 +515,7 @@ const AddSection = () => {
           </Box>
         </SimpleGrid>
         :
-        formik.values.days.map((day,i)=>{
+        formik.values.days?.map((day,i)=>{
             return(
                 <SimpleGrid columns={[1, 2]} spacing={10} key={i}>
                 <Box>
@@ -442,18 +556,24 @@ const AddSection = () => {
         
 }
       </Card>
+}
+      </>
+}
       {
-        isTutorial==1&&<Card py={10} px={5} my={10}>
+       sectionDetails?.type?.toLowerCase()=='tutorial'&&
+       <>
+        
+       {<Card py={10} px={5} my={10}>
           <Text mb={10} fontWeight={'bold'}>Tutorial</Text>
           <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>
           <Input
             type={'number'}
-            id='tutorial_section_id'
-            name='tutorial_section_id'
+            id='section_id'
+            name='section_id'
             onChange={formik.handleChange}
-            value={formik.values.section_id?formik.values.section_id+1:""}
+            value={formik.values.section_id?formik.values.section_id:""}
             placeholder='22356'
             size='md'
             mb={'10px'}
@@ -462,37 +582,91 @@ const AddSection = () => {
         </Box>
 
         <Box>
+          <Text mb='8px'>Selected Course</Text>
+          <Input
+            id='course_id'
+            name='course_id'
+            onChange={formik.handleChange}
+            value={formik.values.course_id}
+            placeholder='SWE 466'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
+        </Box>
+
+        {
+          <Box>
+             <Flex justifyContent={'space-between'}>
           <Text mb='8px'>Selected Instructor</Text>
-          <Field
+           <Checkbox onChange={()=>setIsChange(!isChange)}>Change Instructor?</Checkbox>
+          </Flex>
+            {!isChange&&
+         <Box>
+         
+          <Input
+            id='instructor_name'
+            name='instructor_name'
+            onChange={formik.handleChange}
+            value={formik.values.instructor_name}
+            placeholder='hossam'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
+               </Box>
+}
+        {  isChange&&<Field
                 className='custom-select'
-                name='tutorial_instructor_id'
-                id='tutorial_instructor_id'
+                name='instructor_id'
+                id='instructor_id'
                 options={instructorOptions}
                 component={CustomSelect}
                 // setFieldTouched={setFieldTouched}
                 placeholder='Select...'
                 isMulti={false}
                 // menuShouldScrollIntoView
-                hideSelectedOptions 
+                hideSelectedOptions
                 isSearchable
                 
               />
+        }
         </Box>
+}
+
+        
 
         <Box>
           <Text mb='8px'>classroom </Text>
           <Input
-            id='tutorial_classroom'
-            name='tutorial_classroom'
+            id='classroom'
+            name='classroom'
             onChange={formik.handleChange}
-            value={formik.values.tutorial_classroom}
+            value={formik.values.classroom}
             placeholder='9'
             size='md'
             mb={'10px'}
           />
         </Box>
       </SimpleGrid>
-      <Card py={10} px={5} my={10}>
+      <Flex justifyContent={'space-between'}>
+      <Text mb='8px' mt={10}>Time </Text>
+      <Checkbox onChange={()=>setIsChangeTime(!isChangeTime)}>Change Time?</Checkbox>
+      </Flex>
+        <Flex flexWrap={'wrap'} >
+          {
+             Object.entries(formik.values?.time||{}).filter((item)=>item[1]=='-')?.length!=5?  Object.entries(formik.values?.time||{}).filter((item)=>item[1]!='-').map((item,i)=>{
+                return(
+                  <Flex key={i} my={2}>
+                   <Text fontWeight={'bold'} mr={2}>{item[0]+": "}</Text>
+                   <Text>{item[1]}</Text>
+                  </Flex>
+                )
+              })
+              :<Text fontWeight={'bold'}>No time determined yet</Text>
+          }
+        </Flex>
+     { isChangeTime&& <Card py={10} px={5} my={10}>
 
       <Box>
       <RadioGroup my={5}   name={'tutorial_day'} id={'tutorial_day'} >
@@ -551,20 +725,24 @@ const AddSection = () => {
         </SimpleGrid>
                 
       </Card>
+      }
         </Card>
+}
+</>
       }
         {
-        isLab==1&&<Card py={10} px={5} my={10}>
+        sectionDetails?.type?.toLowerCase()=='lab'&&
+        <Card py={10} px={5} my={10}>
           <Text mb={10} fontWeight={'bold'}>Lab</Text>
           <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>
           <Input
             type={'number'}
-            id='lab_section_id'
-            name='lab_section_id'
+            id='section_id'
+            name='section_id'
             onChange={formik.handleChange}
-            value={formik.values.section_id?formik.values.section_id+2:""}
+            value={formik.values.section_id?formik.values.section_id:""}
             placeholder='22356'
             size='md'
             mb={'10px'}
@@ -573,30 +751,66 @@ const AddSection = () => {
         </Box>
 
         <Box>
+          <Text mb='8px'>Selected Course</Text>
+          <Input
+            id='course_id'
+            name='course_id'
+            onChange={formik.handleChange}
+            value={formik.values.course_id}
+            placeholder='SWE 466'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
+        </Box>
+
+        {
+          <Box>
+             <Flex justifyContent={'space-between'}>
           <Text mb='8px'>Selected Instructor</Text>
-          <Field
+           <Checkbox onChange={()=>setIsChange(!isChange)}>Change Instructor?</Checkbox>
+          </Flex>
+            {!isChange&&
+         <Box>
+         
+          <Input
+            id='instructor_name'
+            name='instructor_name'
+            onChange={formik.handleChange}
+            value={formik.values.instructor_name}
+            placeholder='hossam'
+            size='md'
+            mb={'10px'}
+            isDisabled
+          />
+               </Box>
+}
+        {  isChange&&<Field
                 className='custom-select'
-                name='lab_instructor_id'
-                id='lab_instructor_id'
+                name='instructor_id'
+                id='instructor_id'
                 options={instructorOptions}
                 component={CustomSelect}
                 // setFieldTouched={setFieldTouched}
                 placeholder='Select...'
                 isMulti={false}
                 // menuShouldScrollIntoView
-                hideSelectedOptions 
+                hideSelectedOptions
                 isSearchable
                 
               />
+        }
         </Box>
+}
+
 
         <Box>
           <Text mb='8px'>classroom </Text>
           <Input
-            id='lab_classroom'
-            name='lab_classroom'
+            id='classroom'
+            name='classroom'
             onChange={formik.handleChange}
-            value={formik.values.lab_classroom}
+            value={formik.values.classroom}
             placeholder='9'
             size='md'
             mb={'10px'}
@@ -604,7 +818,24 @@ const AddSection = () => {
         </Box>
       </SimpleGrid>
 
-      <Card py={10} px={5} my={10}>
+      <Flex justifyContent={'space-between'}>
+      <Text mb='8px' mt={10}>Time </Text>
+      <Checkbox onChange={()=>setIsChangeTime(!isChangeTime)}>Change Time?</Checkbox>
+      </Flex>
+        <Flex flexWrap={'wrap'} >
+          {
+             Object.entries(formik.values?.time||{}).filter((item)=>item[1]=='-')?.length!=5?  Object.entries(formik.values?.time||{}).filter((item)=>item[1]!='-').map((item,i)=>{
+                return(
+                  <Flex key={i} my={2}>
+                   <Text fontWeight={'bold'} mr={2}>{item[0]+": "}</Text>
+                   <Text>{item[1]}</Text>
+                  </Flex>
+                )
+              })
+              :<Text fontWeight={'bold'}>No time determined yet</Text>
+          }
+        </Flex>
+      { isChangeTime&&<Card py={10} px={5} my={10}>
 
       <Box>
       <RadioGroup my={5}   name={'lab_day'} id={'lab_day'} >
@@ -663,14 +894,19 @@ const AddSection = () => {
         </SimpleGrid>
                 
       </Card>
+}
         </Card>
       }
-      <Button onClick={formik.handleSubmit}>Add Section</Button>
+      <Button mt={5} isDisabled={isLoadingUpdate} onClick={formik.handleSubmit}>Edit Section</Button>
     </Fragment>
+    :<Box display={'flex'} justifyContent='center' mt={5}>
+    <Spinner />
+    </Box>
+}
     </FormikProvider>
   );
 };
 
-export default AddSection;
+export default EditSection;
 
 

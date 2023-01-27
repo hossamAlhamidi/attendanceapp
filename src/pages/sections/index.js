@@ -36,7 +36,9 @@ import Pagination from '../../components/pagination';
 import { isEmpty } from '../../components/ModalTemplate';
 import { useDeleteSection } from '../../services/query/sections';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
+import { TbPencil } from 'react-icons/tb';
 import Prompt from '../../components/Prompt';
+
 const Sections = () => {
   const navigate = useNavigate()
   const [search,setSearch] = useState("")
@@ -124,7 +126,7 @@ const Sections = () => {
   return (
     <Fragment>
         <Flex alignItems={'center'} justifyContent={'space-between'} my={5}>
-        <Button marginRight={'10px'} ><Link to={`/addsection`}>Add Section</Link></Button>
+        <Link to={`/addsection`}><Button marginRight={'10px'} >Add Section</Button></Link> 
         
        <Box maxW={['100%','50%']} my={'10px'}>
                 <InputGroup>
@@ -170,6 +172,22 @@ const Sections = () => {
                       // state: { type: item.organization_type },
                     }),
                  
+                },
+                {
+                  aria_label: 'Edit Section',
+                  icon: (
+                    <Icon
+                      as={TbPencil}
+                      h={4}
+                      w={4}
+                      color={'lightMode.secondary.lightBlue'}
+                    />
+                  ),
+                  onPress: (item) => {
+                   navigate(`/editSection/${item?.section_id}`
+                   ,{state:{section:item}}
+                   )
+                  },
                 },
                 {
                   aria_label: 'Delete Section',

@@ -21,3 +21,5 @@ export const LOGOUT = 'instructor/logout'
 export const GET_INSTRUCTOR = 'instructor/'
 export const UPDATE_INSTRUCTOR = 'instructor/'
 export const DELETE_SECTION = (id)=>`sections/${id}`
+export const GET_SECTION_BY_ID=(id)=>`sections/${id}`
+export const UPDATE_SECTION=`sections/`

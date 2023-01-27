@@ -13,8 +13,8 @@ export const PUBLIC_PATHS = {
     STUDENTS:'/students',
     STUDENT:"/students/:id",
     ADD_SECTION:'/addSection',
+    EDIT_SECTION:'/editSection/:id',
     INSTRUCTORS:"/instructors",
     INSTRUCTOR_PROFILE:'/instructor'
-    
   };
   
