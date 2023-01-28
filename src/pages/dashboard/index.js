@@ -9,71 +9,12 @@ const Dashboard = () => {
   return (
     <Fragment>
       <SimpleGrid columns={[1,1,2]} spacing={10} >
-        <Card  minH={'50vh'} alignSelf={'center'} >
-          <CardHeader>
-            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Most registered courses</Heading>
-          </CardHeader>
-        <Box
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          as={'div'}
-          margin={'auto'}
-      
-        >
-        <BarChart/>
-        </Box>
-        </Card>
-        <Card  minH={'50vh'}>
-        <CardHeader>
-            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Most Sections that has absent students</Heading>
-          </CardHeader>
-        <Box
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          as={'div'}
-          margin={'auto'}
-        >
-        <DoughnutChart/>
-        </Box>
-        </Card>
+       <BarChart/>
+       <DoughnutChart/>
 
-        <Card   alignSelf={'center'} >
-          <CardHeader>
-            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Most Instructors Teaching courses</Heading>
-          </CardHeader>
-        <Box
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          as={'div'}
-          margin={'auto'}
-      
-        >
-        <LineChart/>
-        </Box>
-        </Card>
+       <LineChart/>
 
-        <Card  alignSelf={'center'} >
-          <CardHeader>
-            <Heading as={'h6'} size={'xs'} textAlign={'center'}>Number of Absence</Heading>
-          </CardHeader>
-        <Box
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          as={'div'}
-          margin={'auto'}
-      
-        >
-        <AreaChart/>
-        </Box>
-        </Card>
+       <AreaChart/>
       </SimpleGrid>
     
       <Box my={10}>

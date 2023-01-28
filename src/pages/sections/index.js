@@ -50,7 +50,7 @@ const Sections = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {data,isLoading,refetch:getAllSections} = useGetAllSections({
     onSuccess:(res)=>{
-      console.log(res,'success')
+    
     },
     onError:(err)=>{
       console.log(err,'error')

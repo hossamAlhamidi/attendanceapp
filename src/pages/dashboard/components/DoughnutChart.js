@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { SimpleGrid , Box ,Card,Flex,CardBody,CardHeader,Heading,Text,Select,Input} from '@chakra-ui/react'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -13,12 +14,14 @@ const options={
       },
       title: {
         display: false,
-        text: 'Most Sections that has absent students',
+        // text: 'Most Sections that has absent students',
+      
       },
     },
   }
 export const data = {
-  labels: ['22354', '22344', '12554', '32545', '11456', '22546'],
+  // labels: ['22354', '22344', '12554', '32545', '11456', '22546'],
+  labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu',],
   datasets: [
     {
       // label: '# of Votes',
@@ -52,14 +55,15 @@ export const data = {
             title: {
               font: {
                 weight: 'bold',
-                size:8,
-              }
+                size:12,
+              },
+              textAlign:'center'
             },
            
           },
           formatter: (val,context) => {
             // console.log(context,"val")
-            return context.chart.data.labels[context.dataIndex];
+            return [val,context.chart.data.labels[context.dataIndex]];
             }
         },
     },
@@ -69,7 +73,41 @@ export const data = {
 const DoughnutChart = () => {
   return (
     <Fragment>
-        <Doughnut data={data} options={options}/>
+       <Card 
+        // minH={'50vh'}
+        
+        >
+        <CardHeader display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+            <Heading as={'h6'} size={'xs'} >Number of Absences</Heading>
+            <Flex 
+           
+            // justifyContent={'space-between'}
+              // p={3}
+              >
+              <Box mr={1}>
+                <Text>From</Text>
+              <Input type={'date'} w={'50px'} />
+              </Box>
+              <Box>
+                <Text>To</Text>
+              <Input type={'date'} w={'50px'} />
+              </Box>
+            </Flex>
+          </CardHeader>
+        <Box
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+          as={'div'}
+          margin={'auto'}
+        >
+        <Doughnut data={data} options={options} height={'200px'}/>
+        
+        </Box>
+       
+        </Card>
+        
     </Fragment>
   )
 }
