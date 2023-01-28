@@ -1,7 +1,8 @@
 import { 
     MOST_INSTRUCTORS,
     MOST_SECTIONS,
-    MOST_COURSES
+    MOST_COURSES,
+    NUMBER_ABSENCES
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -23,5 +24,13 @@ import {
     
         return res.data;
     }
+
+    export const getNumberAbsences = async ({number,from,to})=>{
+
+        const res = await axiosInstance.get(baseUrl+NUMBER_ABSENCES({number,from,to}));
+    
+        return res.data;
+    }
+
 
  

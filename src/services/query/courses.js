@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query";
-import { GET_COURSES,ADD_COURSE,DELETE_COURSE } from "../queryKeys";
-import { getAllCourses,addCourse ,deleteCourse} from "../api/courses";
+import { GET_COURSES,ADD_COURSE,DELETE_COURSE,UPDATE_COURSE } from "../queryKeys";
+import { getAllCourses,addCourse ,deleteCourse,updateCourse} from "../api/courses";
 
 
 export const useGetAllCourses = (options)=>{
@@ -18,6 +18,14 @@ export const useGetAllCourses = (options)=>{
 export const useAddCourse = (options)=>{
     const {data,mutate,isLoading}=useMutation(addCourse,{
         mutationKey:ADD_COURSE,
+        ...options
+    });
+
+    return {mutate,data,isLoading}
+}
+export const useUpdateCourse = (options)=>{
+    const {data,mutate,isLoading}=useMutation(updateCourse,{
+        mutationKey:UPDATE_COURSE,
         ...options
     });
 

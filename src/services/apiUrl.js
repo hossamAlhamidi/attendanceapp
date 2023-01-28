@@ -23,8 +23,9 @@ export const UPDATE_INSTRUCTOR = 'instructor/'
 export const DELETE_SECTION = (id)=>`sections/${id}`
 export const GET_SECTION_BY_ID=(id)=>`sections/${id}`
 export const UPDATE_SECTION=`sections/`
-
+export const UPDATE_COURSE = 'courses/'
 // dashboard
 export const MOST_INSTRUCTORS = (number)=>`dashboard/instructor/${number}`
 export const MOST_SECTIONS = (number)=>`dashboard/section/${number}`
 export const MOST_COURSES = (number)=>`dashboard/courses/${number}`
+export const NUMBER_ABSENCES = ({number,from,to})=>`dashboard/absence/${number}/${from}/${to}`

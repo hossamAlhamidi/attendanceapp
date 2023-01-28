@@ -1,4 +1,4 @@
-import React, { Fragment, useState ,useMemo} from 'react';
+import React, { Fragment, useState, useMemo } from 'react';
 import {
   Box,
   Input,
@@ -19,13 +19,15 @@ import {
   useDisclosure,
   Label,
   useToast,
-  Checkbox,CheckboxGroup,
-  Icon
+  Checkbox,
+  CheckboxGroup,
+  Icon,
 } from '@chakra-ui/react';
+import CourseForm from './CourseForm';
 import Prompt from '../../components/Prompt';
 import { isEmpty } from '../../components/ModalTemplate';
 import Pagination from '../../components/pagination';
-import EmptyState from '../../components/EmptyState'
+import EmptyState from '../../components/EmptyState';
 import { FiSearch } from 'react-icons/fi';
 import { useGetAllCourses } from '../../services/query/courses';
 import CardStructure from '../../components/Card';
@@ -34,27 +36,35 @@ import { useFormik } from 'formik';
 import { useAddCourse } from '../../services/query/courses';
 import TableTemplate from '../../components/Table';
 import { courseTableHeader } from '../../data/courses.headers';
+import { TbPencil } from 'react-icons/tb';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
-import { useDeleteCourse } from '../../services/query/courses';
+import { useDeleteCourse,useUpdateCourse } from '../../services/query/courses';
+
 const Courses = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const toast = useToast()
+  const toast = useToast();
   const confirmPrompt = useDisclosure();
-  const [deletedItem,setDeletedItem] = useState(null)
-  const initValues ={
+  const [deletedItem, setDeletedItem] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const initValues = {
     course_name: '',
     course_id: '',
     abbreviation: '',
-    course_hours:"",
-    has_tutorial:true,
-    has_lab:false
-  }
-    const [initialValues, setInitialValues] = useState(initValues)
+    course_hours: '',
+    has_tutorial: true,
+    has_lab: false,
+  };
+  const [initialValues, setInitialValues] = useState(initValues);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const editModal = useDisclosure();
   //get courses
-  const { data:coursesData, isLoading:isLoadingCourses, refetch:getAllCourses } = useGetAllCourses({
+  const {
+    data: coursesData,
+    isLoading: isLoadingCourses,
+    refetch: getAllCourses,
+  } = useGetAllCourses({
     onSuccess: (res) => {
       console.log(res, 'success');
     },
@@ -64,24 +74,27 @@ const Courses = () => {
   });
 
   const currentData = useMemo(() => {
-     if (coursesData) {
+    if (coursesData) {
       const firstPageIndex = (currentPage - 1) * pageSize;
       const lastPageIndex = firstPageIndex + pageSize;
       return [...coursesData].slice(firstPageIndex, lastPageIndex);
     }
     return [];
-  }, [coursesData,currentPage,pageSize]);
+  }, [coursesData, currentPage, pageSize]);
 
-    const keys = ['course_id','course_name']
+  const keys = ['course_id', 'course_name'];
   const handleFilterData = (param) => {
     if (isEmpty(param)) {
       return currentData;
     }
-  
+
     let filtered = coursesData?.filter((item) => {
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
-        if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
+        if (
+          item[key] &&
+          item[key].toString().toLowerCase().includes(param.toLowerCase())
+        ) {
           return true;
         }
       }
@@ -90,12 +103,16 @@ const Courses = () => {
 
     return filtered;
   };
-  // add course 
-  const {mutate:addCourse,data,isLoading:isLoadingAddCourse} = useAddCourse({
-    onSuccess:(res)=>{
-      console.log(res,"mutate")
+  // add course
+  const {
+    mutate: addCourse,
+    data,
+    isLoading: isLoadingAddCourse,
+  } = useAddCourse({
+    onSuccess: (res) => {
+      console.log(res, 'mutate');
       formik.resetForm();
-      onClose()
+      onClose();
       getAllCourses();
       toast({
         title: 'Successful',
@@ -106,8 +123,8 @@ const Courses = () => {
         position: 'top-right',
       });
     },
-    onError:(err)=>{
-      console.log(err)
+    onError: (err) => {
+      console.log(err);
       toast({
         title: 'Error',
         description: err?.response?.data?.message,
@@ -116,15 +133,43 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
-    }
-  })
+    },
+  });
 
-  // delete course 
-  const {mutate:deleteCourse,isLoading:isLoadingDelete} = useDeleteCourse({
-    onSuccess:(res)=>{
-      console.log(res,'deleted')
+  // update course
+  const { mutate: updateCourse, isLoading: isUpdating } =
+  useUpdateCourse({
+    onSuccess: () => {
+      // setEditCognnaAdmin(res.data);
+      editModal.onClose();
+      getAllCourses();
+      toast({
+        title: 'Updated',
+        description: 'Course is updated',
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+    onError: (err) => {
+      toast({
+        title: 'Error',
+        description: err?.response?.data?.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    },
+  });
+
+  // delete course
+  const { mutate: deleteCourse, isLoading: isLoadingDelete } = useDeleteCourse({
+    onSuccess: (res) => {
+      console.log(res, 'deleted');
       confirmPrompt.onClose();
-      getAllCourses()
+      getAllCourses();
       toast({
         title: 'Deleted',
         description: 'Course has been Deleted',
@@ -134,7 +179,7 @@ const Courses = () => {
         position: 'top-right',
       });
     },
-    onError:(err)=>{
+    onError: (err) => {
       toast({
         title: 'Not Deleted',
         description: err?.response?.data?.message,
@@ -143,27 +188,50 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
-    }
-  })
+    },
+  });
   const handleCloseDeleteModal = () => {
     setDeletedItem(null);
     confirmPrompt.onClose();
   };
-  const handleDelete = (id)=>{
-    deleteCourse(id)
- 
-  }
+  const handleDelete = (id) => {
+    deleteCourse(id);
+  };
 
+  const [formData, setFormData] = useState(initialValues);
   const formik = useFormik({
-    initialValues: initialValues ,
+    initialValues: formData,
+    enableReinitialize: true,
     onSubmit: (values) => {
-      console.log(values)
-       addCourse(values);
-     
-      
+      if (isEditing) {
+        let payload = {
+         course_id:values.course_id,
+         course_name:values.course_name,
+         course_hours:values.course_hours
+
+        };
+        updateCourse(payload)
+      } else {
+        addCourse(values);
+      }
+
       // setInitialValues(initValues)
     },
   });
+
+  const onPressEdit = (course) => {
+    let courseData = {
+      course_id: course.course_id,
+      course_name: course.course_name,
+      abbreviation: course.abbreviation,
+      course_hours: course.course_hours,
+      has_tutorial: course.has_tutorial,
+      has_lab: course.has_lab,
+    };
+    // setEditCognnaAdmin(dataAdmin);
+    setFormData(courseData);
+    setIsEditing(true);
+  };
   return (
     <Fragment>
       <Flex alignItems={'center'} justifyContent={'space-between'} my={5}>
@@ -190,143 +258,106 @@ const Courses = () => {
         </Box>
       </Flex>
 
-              <TableTemplate
-              columns={courseTableHeader}
-              data = {isEmpty(search)?currentData:handleFilterData(search)}
-              isLoading={isLoadingCourses}
-              emptyState={<EmptyState message={!search?`No courses added yet`:`No results`}/>}
-              actions = {
-                [
-                  {
-                    aria_label: 'Delete Course',
-                    icon: <Icon as={CgTrashEmpty} color={'red'} />,
-                    onPress: (item) => {
-                      
-                      setDeletedItem(item.course_id)
-   
-                      confirmPrompt.onOpen();
-                    },
-                  },
-                ]
-              }
-              />
-
-         <Flex w="100%" paddingTop="24px">
-          <Flex flex={1}></Flex>
-          <Select
-            w="190px"
-            defaultValue={20}
-            onChange={(e) => {
-              setPageSize(parseInt(e.target.value));
-              setCurrentPage(1);
-            }}
-          >
-            <option value={10}>10 Items Per Page</option>
-            <option value={20}>20 Items Per Page</option>
-            <option value={50}>50 Items Per Page</option>
-            <option value={100}>100 Items Per Page</option>
-          </Select>
-          <Pagination
-            currentPage={currentPage}
-            totalCount={
-              isEmpty(search)
-                ? coursesData?.length || 0
-                : handleFilterData(search).length
-            }
-            pageSize={pageSize}
-            onPageChange={(page) => setCurrentPage(page)}
+      <TableTemplate
+        columns={courseTableHeader}
+        data={isEmpty(search) ? currentData : handleFilterData(search)}
+        isLoading={isLoadingCourses}
+        emptyState={
+          <EmptyState
+            message={!search ? `No courses added yet` : `No results`}
           />
-        </Flex>
-      {/* {!isLoadingCourses && (
-        <SimpleGrid minChildWidth='300px' spacing='40px' mt={'2em'}>
-          {coursesData.map((element, index) => {
-            return (
-              <Card key={element?.course_id}>
-                <CardHeader>
-                  <Flex justifyContent={'space-between'}>
-                    <Heading size='sm'>
-                      Course: {element?.abbreviation + ' ' + element?.course_id}
-                    </Heading>
-                  </Flex>
-                </CardHeader>
-                <CardBody>
-                  <Text>Course Name: {element?.course_name}</Text>
-                </CardBody>
-                <CardFooter>
-                  <Button>View here</Button>
-                </CardFooter>
-              </Card>
-            );
-          })}
-        </SimpleGrid>
-      )} */}
+        }
+        actions={[
+          {
+            aria_label: 'Edit Course',
+            icon: (
+              <Icon
+                as={TbPencil}
+                h={4}
+                w={4}
+                color={'lightMode.secondary.lightBlue'}
+              />
+            ),
+            onPress: (item) => {
+              onPressEdit(item);
+              editModal.onOpen();
+            },
+          },
+          {
+            aria_label: 'Delete Course',
+            icon: <Icon as={CgTrashEmpty} color={'red'} />,
+            onPress: (item) => {
+              setDeletedItem(item.course_id);
 
-      <ModalTemplate isOpen={isOpen} onClose={onClose} title={'Add Course'} >
+              confirmPrompt.onOpen();
+            },
+          },
+        ]}
+      />
+
+      <Flex w='100%' paddingTop='24px'>
+        <Flex flex={1}></Flex>
+        <Select
+          w='190px'
+          defaultValue={20}
+          onChange={(e) => {
+            setPageSize(parseInt(e.target.value));
+            setCurrentPage(1);
+          }}
+        >
+          <option value={10}>10 Items Per Page</option>
+          <option value={20}>20 Items Per Page</option>
+          <option value={50}>50 Items Per Page</option>
+          <option value={100}>100 Items Per Page</option>
+        </Select>
+        <Pagination
+          currentPage={currentPage}
+          totalCount={
+            isEmpty(search)
+              ? coursesData?.length || 0
+              : handleFilterData(search).length
+          }
+          pageSize={pageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </Flex>
+
+      <ModalTemplate
+        isOpen={isOpen}
+        onClose={onClose}
+        title={'Add Course'}
+        onCloseComplete={() => {
+          formik.resetForm({ values: initialValues });
+        }}
+      >
         <form onSubmit={formik.handleSubmit}>
-          <Box mx={'5px'}>
-            <Text mb='8px'>Course Name </Text>
-            <Input
-              id='course_name'
-              name='course_name'
-              onChange={formik.handleChange}
-              value={formik.values.course_name}
-              placeholder='@example Project Software Management '
-              size='md'
-              mb={'10px'}
-            />
-            <Text mb='8px'>Course Id </Text>
-            <Input
-              id='course_id'
-              name='course_id'
-              onChange={formik.handleChange}
-              value={formik.values.course_id}
-              placeholder='@example 466'
-              size='md'
-              mb={'10px'}
-            />
-            <Text mb='8px'>abbreviation </Text>
-            <Input
-              id='abbreviation'
-              name='abbreviation'
-              onChange={formik.handleChange}
-              value={formik.values.abbreviation}
-              placeholder='@example i.e SWE'
-              size='md'
-              mb={'10px'}
-            />
+          <CourseForm
+            formik={formik}
+            isLoading={isLoadingAddCourse}
+            onClose={onClose}
+            isEditing={isEditing}
+          />
+        </form>
+      </ModalTemplate>
 
-            <Text mb='8px'>Course Hours </Text>
-            <Input
-              id='course_hours'
-              name='course_hours'
-              type={'number'}
-              max={6}
-              min={1}
-              onChange={formik.handleChange}
-              value={formik.values.course_hours}
-              placeholder='@example 3'
-              size='md'
-              mb={'10px'}
-            />
-
-{/* <CheckboxGroup colorScheme='green' defaultValue={['has_tutorial']}> */}
-  <Stack my={4} spacing={[1, 5]} direction="row" >
-    <Checkbox defaultChecked name='has_tutorial' id='has_tutorial' value={formik.values.has_tutorial} onChange={formik.handleChange} >has tutorial</Checkbox>
-    <Checkbox name='has_lab' id='has_lab' value={formik.values.has_lab} onChange={formik.handleChange}>has lab</Checkbox>
-  </Stack>
-{/* </CheckboxGroup> */}
-          </Box>
-          <Flex alignItems={'center'}>
-            <Button isLoading={isLoadingAddCourse} type='submit' m={'10px'} colorScheme={'blue'}>
-              Submit
-            </Button>
-            <Button type='button' m={'10px'} onClick={()=>{
-              onClose()
-              formik.resetForm()
-            }}>
-              Cancel
-            </Button>
-          </Flex>
+      <ModalTemplate
+        isOpen={editModal.isOpen}
+        onClose={editModal.onClose}
+        title={'Edit Course'}
+        onCloseComplete={() => {
+          // setEditObject(initialValues);
+          setIsEditing(false);
+          formik.resetForm({ values: initialValues });
+          // formik.resetForm();
+        }}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <CourseForm
+            formik={formik}
+            isLoading={isUpdating}
+            onClose={editModal.onClose}
+            isEditing={isEditing}
+          />
         </form>
       </ModalTemplate>
 
