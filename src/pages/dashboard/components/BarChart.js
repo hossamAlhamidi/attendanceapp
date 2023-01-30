@@ -108,7 +108,7 @@ const BarChart = () => {
           // minH={'50vh'} 
           alignSelf={'center'} 
            >
-         <CardHeader mt={3} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+         <CardHeader  display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
             <Heading as={'h6'} size={'xs'} >Most registered courses</Heading>
             <Select
             w="70px"

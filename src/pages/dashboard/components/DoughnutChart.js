@@ -3,7 +3,7 @@ import { SimpleGrid , Box ,Card,Flex,CardBody,CardHeader,Heading,Text,Select,Inp
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { useGetNumberAbsences } from '../../../services/query/dashboard';
+import { useGetNumberAbsences,useGetMostSections } from '../../../services/query/dashboard';
 ChartJS.register(ArcElement,ChartDataLabels, Tooltip, Legend);
 const options={
     responsive: true,
@@ -24,24 +24,29 @@ const options={
  
 const DoughnutChart = () => {
   const [numOfRecord,setNumOfRecord] = useState(5);
-  const [from,setFrom] = useState('')
-  const [to,setTo] = useState('')
-  const {data:numberOfAbsences,isLoading,refetch} = useGetNumberAbsences(
-    {number:numOfRecord,from:from,to:to},
-    {
+  const {data:mostSections,isLoading,refetch} = useGetMostSections(numOfRecord,{
     onSuccess:(res)=>{
-      console.log(res,"success")
+      
     }
   })
+  // const [from,setFrom] = useState('')
+  // const [to,setTo] = useState('')
+  // const {data:numberOfAbsences,isLoading,refetch} = useGetNumberAbsences(
+  //   {number:numOfRecord,from:from,to:to},
+  //   {
+  //   onSuccess:(res)=>{
+  //     console.log(res,"success")
+  //   }
+  // })
 
   const numOfAbsencesData = useMemo(() => {
-    if (numberOfAbsences) {
+    if (mostSections) {
       const derivedSections = {
         labels: [],
         data: [],
       };
-      numberOfAbsences?.forEach((item) => {
-        derivedSections.labels.push(item.day);
+      mostSections?.forEach((item) => {
+        derivedSections.labels.push(item.section_id);
         derivedSections.data.push(item.number);
       });
       return derivedSections;
@@ -51,7 +56,7 @@ const DoughnutChart = () => {
       data: [],
 
     };
-  }, [numberOfAbsences]);
+  }, [mostSections]);
 
   const data = {
     // labels: ['22354', '22344', '12554', '32545', '11456', '22546'],
@@ -97,7 +102,7 @@ const DoughnutChart = () => {
             },
             formatter: (val,context) => {
               // console.log(context,"val")
-              return [val,context.chart.data.labels[context.dataIndex]];
+              return [context.chart.data.labels[context.dataIndex]];
               }
           },
       },
@@ -110,22 +115,20 @@ const DoughnutChart = () => {
         // minH={'50vh'}
         
         >
-        <CardHeader display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
-            <Heading as={'h6'} size={'xs'} >Number of Absences</Heading>
-            <Flex 
-           
-            // justifyContent={'space-between'}
-              // p={3}
-              >
-              <Box mr={1}>
-                <Text>From</Text>
-              <Input type={'date'} w={'50px'} name={'from'} value={from} onChange={(e)=>setFrom(e.target.value)} />
-              </Box>
-              <Box>
-                <Text>To</Text>
-              <Input type={'date'} w={'50px'} name={'to'} value={to}  onChange={(e)=>setTo(e.target.value)} />
-              </Box>
-            </Flex>
+         <CardHeader  display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+            <Heading as={'h6'} size={'xs'} >Most sections that has absent students</Heading>
+            <Select
+            w="70px"
+            defaultValue={5}
+            onChange={(e) => {
+              setNumOfRecord(parseInt(e.target.value));
+            }}
+          >
+            <option value={5}>5 </option>
+            <option value={10}>10 </option>
+            {/* <option value={15}>15 </option>
+            <option value={20}>20 </option> */}
+          </Select>
           </CardHeader>
         <Box
           style={{
