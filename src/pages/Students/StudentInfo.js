@@ -237,7 +237,7 @@ const StudentInfo = () => {
      { is_admin?<Tabs>
         <TabList>
           <Tab>Student Info</Tab>
-          <Tab>Student Courses</Tab>
+          <Tab>Student Absences</Tab>
         </TabList>
 
         <TabPanels>
@@ -399,7 +399,7 @@ const StudentInfo = () => {
       :
       <Tabs>
       <TabList>
-        <Tab>Student Courses</Tab>
+        <Tab>Student Absences</Tab>
       </TabList>
 
       <TabPanels>

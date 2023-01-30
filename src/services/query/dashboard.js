@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "react-query";
-import { MOST_INSTRUCTORS,MOST_SECTIONS,MOST_COURSES,NUMBER_ABSENCES } from "../queryKeys";
-import { getMostInstructors,getMostSections,getMostCourses,getNumberAbsences} from "../api/dashboard";
+import { MOST_INSTRUCTORS,MOST_SECTIONS,MOST_COURSES,NUMBER_ABSENCES,TOTAL_COUNT } from "../queryKeys";
+import { getMostInstructors,getMostSections,getMostCourses,getNumberAbsences,getTotalCount} from "../api/dashboard";
 
 
 export const useGetMostInstructors = (number,options)=>{
@@ -53,4 +53,14 @@ export const useGetNumberAbsences = ({number,from,to},options)=>{
 
 
 
+export const useGetTotalCount = (options)=>{
+    const {data,isLoading,refetch} = useQuery(
+        [TOTAL_COUNT],
+        ()=>getTotalCount(),
+        {
+            ...options
+        }
+    );
 
+    return {data,isLoading,refetch}
+}

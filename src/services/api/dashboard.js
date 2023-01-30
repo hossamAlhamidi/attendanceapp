@@ -2,7 +2,8 @@ import {
     MOST_INSTRUCTORS,
     MOST_SECTIONS,
     MOST_COURSES,
-    NUMBER_ABSENCES
+    NUMBER_ABSENCES,
+    TOTAL_COUNT
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -31,6 +32,14 @@ import {
     
         return res.data;
     }
+
+    export const getTotalCount = async ()=>{
+
+        const res = await axiosInstance.get(baseUrl+TOTAL_COUNT);
+    
+        return res.data;
+    }
+
 
 
  
