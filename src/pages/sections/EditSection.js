@@ -110,7 +110,9 @@ const EditSection = () => {
         };
       });
 
-      return [{value:"",label:"Not chosen yet"},...derivedOptions];
+      return [
+        // {value:"",label:"Not chosen yet"},
+        ...derivedOptions];
     }
     return [];
   }, [instructors]);

@@ -39,7 +39,14 @@ import { courseTableHeader } from '../../data/courses.headers';
 import { TbPencil } from 'react-icons/tb';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { useDeleteCourse,useUpdateCourse } from '../../services/query/courses';
+import * as Yup from 'yup'
 
+const addCourseValidation = Yup.object().shape({
+  course_id:Yup.string().min(3).max(7).required("Required"),
+  course_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
+  abbreviation:Yup.string().min(3).max(6).required("Required"),
+  course_hours:Yup.number().min(1).max(6).required("Required")
+})
 const Courses = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -201,7 +208,9 @@ const Courses = () => {
   const [formData, setFormData] = useState(initialValues);
   const formik = useFormik({
     initialValues: formData,
+    validationSchema:addCourseValidation,
     enableReinitialize: true,
+    isInitialValid:isEditing?true:false,
     onSubmit: (values) => {
       if (isEditing) {
         let payload = {
@@ -223,7 +232,7 @@ const Courses = () => {
     let courseData = {
       course_id: course.course_id,
       course_name: course.course_name,
-      abbreviation: course.abbreviation,
+      abbreviation: course.course_id.split(" ")[0],
       course_hours: course.course_hours,
       has_tutorial: course.has_tutorial,
       has_lab: course.has_lab,
@@ -352,6 +361,7 @@ const Courses = () => {
         }}
       >
         <form onSubmit={formik.handleSubmit}>
+          <Text>{JSON.stringify(formik.errors)}</Text>
           <CourseForm
             formik={formik}
             isLoading={isUpdating}

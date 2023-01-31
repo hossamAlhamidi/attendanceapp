@@ -36,6 +36,15 @@ import { studentAbsenceTableHeader } from '../../data/studentAbsence.header';
 import { useDeleteAbsence } from '../../services/query/student';
 import Prompt from '../../components/Prompt'
 import { useAuthPermission } from '../../hook/useAuthPermission';
+import * as Yup from 'yup'
+
+const editStudentValidation = Yup.object().shape({
+  student_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
+  student_id:Yup.string().min(3).max(12).required("Required"),
+  email:Yup.string().email().required("Required"),
+  phone_number:Yup.string().length(10),
+
+})
 const StudentInfo = () => {
   const navigate = useNavigate();
   const params = useParams();
@@ -170,6 +179,8 @@ const StudentInfo = () => {
 
   const formik = useFormik({
     initialValues: studentInfo,
+    validationSchema:editStudentValidation,
+    isInitialValid:true,
     onSubmit: (values) => {
       console.log(values, 'submit');
       updateStudent({
@@ -273,7 +284,11 @@ const StudentInfo = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.student_name&&formik.touched.student_name && 'tomato' }
                   />
+                    {formik.touched.student_name && formik.errors.student_name && (
+              <Text color={'tomato'} >{formik.errors.student_name}</Text>
+            )}
                  </FormControl>
                  
                  <FormControl>
@@ -286,7 +301,11 @@ const StudentInfo = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.email&&formik.touched.email && 'tomato' }
                   />
+                    {formik.touched.email && formik.errors.email && (
+              <Text color={'tomato'} >{formik.errors.email}</Text>
+            )}
                  </FormControl>
                  
                  <FormControl>
@@ -299,7 +318,11 @@ const StudentInfo = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.phone_number&&formik.touched.phone_number && 'tomato' }
                   />
+                    {formik.touched.phone_number && formik.errors.phone_number && (
+              <Text color={'tomato'} >{formik.errors.phone_number}</Text>
+            )}
                  </FormControl>
                  
                 </SimpleGrid>
@@ -307,7 +330,7 @@ const StudentInfo = () => {
                 <Button
                   onClick={() => formik.handleSubmit()}
                   mt={8}
-                  isDisabled={!isEdit}
+                  isDisabled={!isEdit||!formik.isValid}
                 >
                   Save
                 </Button>

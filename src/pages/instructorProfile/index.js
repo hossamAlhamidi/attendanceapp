@@ -27,7 +27,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { HiLockClosed, HiLockOpen } from 'react-icons/hi';
 import { TbPencil } from 'react-icons/tb';
 import { useNavigate, useParams, useLocation, Navigate } from 'react-router-dom';
-import { useFormik } from 'formik';
+import { FormikProvider, useFormik } from 'formik';
 import { useUpdateStudent } from '../../services/query/student';
 import { useGetAbsenceForStudent } from '../../services/query/student';
 import TableTemplate from '../../components/Table';
@@ -35,6 +35,20 @@ import { studentAbsenceTableHeader } from '../../data/studentAbsence.header';
 import { useDeleteAbsence } from '../../services/query/student';
 import Prompt from '../../components/Prompt'
 import { useGetInstructor , useUpdateInstructor} from '../../services/query/instructors';
+import * as Yup from 'yup'
+const editInstructorValidation = Yup.object().shape({
+  instructor_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
+  instructor_id:Yup.string().min(3).max(12).required("Required"),
+  email:Yup.string().email().required("Required"),
+  phone_number:Yup.string().length(10),
+  password: Yup.string()
+  .matches(/^(?=.*[a-zA-Z])[\w\d]+$/, 'Password must have at least one letter and can only contain letters, numbers, and underscores')
+  .min(8, 'Password must be at least 8 characters long')
+  ,
+password_confirmation: Yup.string()
+  .oneOf([Yup.ref('password'), null], 'Password confirmation does not match')
+  ,
+})
 const InstructorProfile = () => {
   const [isEdit, setIsEdit] = useState(false);
   const toast = useToast();
@@ -93,6 +107,8 @@ const InstructorProfile = () => {
   })
   const formik = useFormik({
     initialValues: instructorInfo,
+    validationSchema:editInstructorValidation,
+    isInitialValid:true,
     onSubmit: (values) => {
       console.log(values, 'submit');
       updateInstructor({
@@ -115,6 +131,7 @@ const InstructorProfile = () => {
   const { values, handleChange, handleBlur } = formik;
   return (
     <Fragment>
+      <Text>{JSON.stringify(formik.errors)}</Text>
       {
       !isLoadinginstructorInformation?
        <Card my={5}>
@@ -134,8 +151,12 @@ const InstructorProfile = () => {
                     value={values?.instructor_id}
                     onChange={handleChange}
                     onBlur={handleBlur}
+                    borderColor={formik.errors.instructor_id&&formik.touched.instructor_id && 'tomato' }
                     isDisabled={true}
                   />
+                   {formik.touched.instructor_id && formik.errors.instructor_id && (
+              <Text color={'tomato'} >{formik.errors.instructor_id}</Text>
+            )}
                 </FormControl>
                  
                  <FormControl>
@@ -148,7 +169,11 @@ const InstructorProfile = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.instructor_name&&formik.touched.instructor_name && 'tomato' }
                   />
+                   {formik.touched.instructor_name && formik.errors.instructor_name && (
+              <Text color={'tomato'} >{formik.errors.instructor_name}</Text>
+            )}
                  </FormControl>
                  
                  <FormControl>
@@ -161,7 +186,11 @@ const InstructorProfile = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.email&&formik.touched.email && 'tomato' }
                   />
+                   {formik.touched.email && formik.errors.email && (
+              <Text color={'tomato'} >{formik.errors.email}</Text>
+            )}
                  </FormControl>
                  
                  <FormControl>
@@ -174,7 +203,11 @@ const InstructorProfile = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.phone_number&&formik.touched.phone_number && 'tomato' }
                   />
+                   {formik.touched.phone_number && formik.errors.phone_number && (
+              <Text color={'tomato'} >{formik.errors.phone_number}</Text>
+            )}
                  </FormControl>
 
                  <FormControl>
@@ -202,7 +235,11 @@ const InstructorProfile = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.password&&formik.touched.password && 'tomato' }
                   />
+                   {formik.touched.password && formik.errors.password && (
+              <Text color={'tomato'} >{formik.errors.password}</Text>
+            )}
                  </FormControl>
 
                  <FormControl>
@@ -216,7 +253,11 @@ const InstructorProfile = () => {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     isDisabled={!isEdit}
+                    borderColor={formik.errors.password_confirmation&&formik.touched.password_confirmation && 'tomato' }
                   />
+                   {formik.touched.password_confirmation && formik.errors.password_confirmation && (
+              <Text color={'tomato'} >{formik.errors.password_confirmation}</Text>
+            )}
                  </FormControl>
                  
                 </SimpleGrid>
@@ -224,7 +265,7 @@ const InstructorProfile = () => {
                 <Button
                   onClick={() => formik.handleSubmit()}
                   mt={8}
-                  isDisabled={!isEdit}
+                  isDisabled={!isEdit||!formik.isValid}
                 >
                   Save
                 </Button>

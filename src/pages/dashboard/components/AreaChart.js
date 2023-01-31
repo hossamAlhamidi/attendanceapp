@@ -27,7 +27,8 @@ import {
   useGetMostSections,
   useGetNumberAbsences,
 } from '../../../services/query/dashboard';
-
+import { isEmpty } from '../../../components/ModalTemplate';
+import moment from 'moment/moment';
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -128,7 +129,7 @@ const AreaChart = () => {
       },
     ],
   };
-
+  console.log(moment(from).format('YYYY-MM-DD'))
   return (
     <Fragment>
       <Card alignSelf={'center'}>
@@ -166,6 +167,9 @@ const AreaChart = () => {
                 w={'50px'}
                 name={'to'}
                 value={to}
+                min={moment(from).format('YYYY-MM-DD')}
+                max={moment(from).add(30, 'days').format('YYYY-MM-DD')}
+                isDisabled={isEmpty(from)}
                 onChange={(e) => setTo(e.target.value)}
                 // value={to ? to.toISOString().substr(0, 10) : ""}
                 // onChange={handleEndDateChange}

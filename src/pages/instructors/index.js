@@ -40,6 +40,14 @@ import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { isEmpty } from '../../components/ModalTemplate';
 import Prompt from '../../components/Prompt';
 import { useDeleteInstructor } from '../../services/query/instructors';
+import * as Yup from 'yup'
+
+const addInstructorValidation = Yup.object().shape({
+  instructor_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
+  instructor_id:Yup.string().min(3).max(12).required("Required"),
+  email:Yup.string().email().required("Required"),
+  phone_number:Yup.string().length(10)
+})
 const Instructors = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -154,6 +162,8 @@ const Instructors = () => {
     }
     const formik = useFormik({
         initialValues: initialValues ,
+        validationSchema:addInstructorValidation,
+        isInitialValid:false,
         onSubmit: (values) => {
           console.log(values)
            addInstructor(values);
@@ -238,52 +248,71 @@ const Instructors = () => {
 <ModalTemplate isOpen={isOpen} onClose={onClose} title={'Add Course'} >
         <form onSubmit={formik.handleSubmit}>
           <Box mx={'5px'}>
-            <Text mb='8px'>Instructor Name </Text>
-            <Input
-              id='instructor_name'
-              name='instructor_name'
-              onChange={formik.handleChange}
-              value={formik.values.instructor_name}
-              placeholder='@example hossam '
-              size='md'
-              mb={'10px'}
-            />
             <Text mb='8px'>Instructor ID </Text>
             <Input
+              type={'number'}
               id='instructor_id'
               name='instructor_id'
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               value={formik.values.instructor_id}
               placeholder='@example 439'
               size='md'
               mb={'10px'}
+              borderColor={formik.errors.instructor_id&&formik.touched.instructor_id && 'tomato' }
             />
+              {formik.touched.instructor_id && formik.errors.instructor_id && (
+              <Text color={'tomato'} >{formik.errors.instructor_id}</Text>
+            )}
+             <Text mb='8px'>Instructor Name </Text>
+            <Input
+              id='instructor_name'
+              name='instructor_name'
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.instructor_name}
+              placeholder='@example hossam '
+              size='md'
+              mb={'10px'}
+              borderColor={formik.errors.instructor_name&&formik.touched.instructor_name && 'tomato' }
+            />
+              {formik.touched.instructor_name && formik.errors.instructor_name && (
+              <Text color={'tomato'} >{formik.errors.instructor_name}</Text>
+            )}
             <Text mb='8px'>email </Text>
             <Input
               id='email'
               name='email'
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               value={formik.values.email}
               placeholder='example@gmail.com'
               size='md'
               mb={'10px'}
+              borderColor={formik.errors.email&&formik.touched.email && 'tomato' }
             />
-
+            {formik.touched.email && formik.errors.email && (
+              <Text color={'tomato'} >{formik.errors.email}</Text>
+            )}
             <Text mb='8px'>Phone Number </Text>
             <Input
               id='phone_number'
               name='phone_number'
             //   type={'number'}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               value={formik.values.phone_number}
               placeholder='0501906666'
               size='md'
               mb={'10px'}
+              borderColor={formik.errors.phone_number&&formik.touched.phone_number && 'tomato' }
             />
-
+              {formik.touched.phone_number && formik.errors.phone_number && (
+              <Text color={'tomato'} >{formik.errors.phone_number}</Text>
+            )}
           </Box>
           <Flex alignItems={'center'}>
-            <Button isLoading={isLoadingAddInstructor} type='submit' m={'10px'} colorScheme={'blue'}>
+            <Button isDisabled={!formik.isValid} isLoading={isLoadingAddInstructor} type='submit' m={'10px'} colorScheme={'blue'}>
               Submit
             </Button>
             <Button type='button' m={'10px'} onClick={()=>{

@@ -4,7 +4,7 @@ import Select,{ StylesConfig } from 'react-select';
 import { Box ,useColorModeValue} from '@chakra-ui/react';
 // import chroma from 'chroma-js';
 // import { OptionsType, ValueType } from "react-select/lib/types";
-
+import { isEmpty } from './ModalTemplate';
 
 export const CustomSelect = ({
   className,
@@ -15,7 +15,10 @@ export const CustomSelect = ({
   isMulti,
   setFieldTouched,
   setIsTutorial,
-  setIsLab
+  setIsLab,
+  onBlur,
+  setInstructorIdError,
+  setCourseError
 }) => {
   const colorMode = useColorModeValue('light', 'dark');
   const backgroundColor = useColorModeValue("white","darkmode.widgetBg")
@@ -58,6 +61,9 @@ export const CustomSelect = ({
     
     setIsTutorial&& setIsTutorial(option.has_tutorial)
     setIsLab&&setIsLab(option.has_lab);
+    setInstructorIdError&&setInstructorIdError("")
+    setCourseError&&setCourseError("")
+    
   };
   
   const getValue = () => {
@@ -73,12 +79,16 @@ export const CustomSelect = ({
   return (
     <Box
       onClick={() => {
-        setFieldTouched && setFieldTouched('course', true); // so if you don't have you don't call it 
+        setFieldTouched && setFieldTouched(field.name, true,true); // so if you don't have you don't call it 
       }}
       overflow={'visible'}
     >
       <Select
         className={className}
+        // onFocus={()=>{
+        //   setFieldTouched('instructor_id', true,true);
+        //   onBlur();
+        // }}
         name={field.name}
         value={getValue()}
         onChange={onChange}
@@ -89,6 +99,11 @@ export const CustomSelect = ({
         // colorScheme="black"
         // styles={colourStyles}
         // selectedOptionStyle="check"
+        onBlur={()=>{
+          // formik.setFieldError('instructor_id',"")
+          // formik.setFieldTouched('instructor_id', true);
+          onBlur();
+        }}
       />
     </Box>
   );

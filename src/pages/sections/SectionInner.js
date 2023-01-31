@@ -46,6 +46,15 @@ import ModalTemplate from '../../components/ModalTemplate';
 import Pagination from '../../components/pagination';
 import { useAddStudentToSection } from '../../services/query/sections';
 import { useDeleteStudentFromSection } from '../../services/query/student';
+import * as Yup from 'yup'
+
+const addStudentValidation = Yup.object().shape({
+  student_id: Yup.string().min(3)
+  .matches(/^\d+$/, 'Input can only contain numbers')
+  .max(10, 'Input cannot be more than 10 characters')
+  .required('Input is required'),
+  
+})
 const SectionInner = () => {
     const [search, setSearch] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -195,6 +204,8 @@ const SectionInner = () => {
 }
  const formik = useFormik({
   initialValues: initValues ,
+  validationSchema:addStudentValidation,
+  isInitialValid:false,
   onSubmit: (values) => {
     console.log(values)
      addStudent(values);
@@ -408,10 +419,15 @@ const SectionInner = () => {
               name='student_id'
               onChange={formik.handleChange}
               value={formik.values.student_id}
+              onBlur={formik.handleBlur}
               placeholder='439... '
               size='md'
               mb={'10px'}
+              borderColor={formik.errors.student_id&&formik.touched.student_id && 'tomato' }
             />
+            {formik.touched.student_id && formik.errors.student_id && (
+              <Text color={'tomato'} >{formik.errors.student_id}</Text>
+            )}
             <Text mb='8px'>Section Id </Text>
             <Input
               id='section_id'
@@ -431,7 +447,7 @@ const SectionInner = () => {
 {/* </CheckboxGroup> */}
           </Box>
           <Flex alignItems={'center'}>
-            <Button isLoading={isLoadingAddStudent} type='submit' m={'10px'} colorScheme={'blue'}>
+            <Button isDisabled={!formik.isValid} isLoading={isLoadingAddStudent} type='submit' m={'10px'} colorScheme={'blue'}>
               Submit
             </Button>
             <Button type='button' m={'10px'} onClick={()=>{

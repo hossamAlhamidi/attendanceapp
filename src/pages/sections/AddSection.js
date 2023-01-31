@@ -35,9 +35,27 @@ import CustomSelect from '../../components/CustomeSelect';
 import { useAddSection } from '../../services/query/sections';
 import { useGetAllInstructor } from '../../services/query/instructors';
 import { useQueryClient } from 'react-query';
-import { object } from 'yup';
 import { useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { addSectionValidation } from './utils';
 const AddSection = () => {
+  const [is_instructor_id_validation,set_is_Instructor_id_validation]=useState('required')
+  const [is_course_validation,set_is_course_validation]=useState('required')
+  const customValidate = values => {
+    let errors = {};
+  
+    try {
+      addSectionValidation.validateSync(values, { abortEarly: false });
+    } catch (error) {
+      error.inner.forEach(err => {
+        if (err.path !== 'instructor_id') {
+          errors[err.path] = err.message;
+        }
+      });
+    }
+  
+    return errors;
+  };
   const [isSameTime, setIsSameTime] = useState(true);
   const [isTutorial,setIsTutorial] = useState(false)
   const [isLab,setIsLab] = useState(false)
@@ -71,7 +89,9 @@ const AddSection = () => {
         };
       });
 
-      return [{value:"",label:"Not chosen yet"},...derivedOptions];
+      return [
+        // {value:"",label:"Not chosen yet"},
+        ...derivedOptions];
     }
     return [];
   }, [instructors]);
@@ -128,7 +148,7 @@ const AddSection = () => {
     instructor_id: '',
     instructor_name:"",
     classroom: '',
-    // same_time:true,
+    same_time:true,
     // sun:false,
     // mon:false,
     // tue:false,
@@ -165,6 +185,9 @@ const AddSection = () => {
 
   const formik = useFormik({
     initialValues: initValues,
+    validationSchema:addSectionValidation,
+    // validate:customValidate,
+    isInitialValid:false,
     onSubmit: (values) => {
         console.log(values,'values');
         let obj = {
@@ -231,7 +254,7 @@ const AddSection = () => {
             
           />
       </Box>
-   
+     <Text>{JSON.stringify(formik.errors)}</Text>
       <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>
@@ -241,10 +264,15 @@ const AddSection = () => {
             name='section_id'
             onChange={formik.handleChange}
             value={formik.values.section_id}
+            onBlur={formik.handleBlur}
             placeholder='22356'
             size='md'
             mb={'10px'}
+            borderColor={formik.errors.section_id&&formik.touched.section_id && 'tomato' }
           />
+           {formik.touched.section_id && formik.errors.section_id && (
+              <Text color={'tomato'} >{formik.errors.section_id}</Text>
+            )}
         </Box>
 
         <Box>
@@ -260,10 +288,20 @@ const AddSection = () => {
                 isMulti={false}
                 // menuShouldScrollIntoView
                 hideSelectedOptions
+                setFieldTouched={formik.setFieldTouched}
                 isSearchable
                 setIsTutorial={setIsTutorial}
+                setCourseError={set_is_course_validation}
                 setIsLab={setIsLab}
+                onBlur={() => {
+                  formik.setFieldTouched("course", true);
+                  formik.handleBlur("course");
+
+                }}
               />
+               {formik.touched.course  && (
+              <Text color={'tomato'} >{is_course_validation}</Text>
+            )}
         </Box>
 
         <Box>
@@ -280,8 +318,19 @@ const AddSection = () => {
                 // menuShouldScrollIntoView
                 hideSelectedOptions
                 isSearchable
-                
+                setFieldTouched={formik.setFieldTouched}
+                setInstructorIdError = {set_is_Instructor_id_validation}
+                // validateField={'instructor_id'}
+                onBlur={() => {
+                  formik.setFieldTouched("instructor_id", true,true);
+                  formik.handleBlur("instructor_id");
+                  console.log("lost blur")
+                }}
+                borderColor={formik.errors.instructor_id&&formik.touched.instructor_id && 'tomato' }
               />
+              {formik.touched.instructor_id  && (
+              <Text color={'tomato'} >{is_instructor_id_validation}</Text>
+            )}
         </Box>
 
         <Box>
@@ -294,7 +343,12 @@ const AddSection = () => {
             placeholder='9'
             size='md'
             mb={'10px'}
+            onBlur={formik.handleBlur}
+            borderColor={formik.errors.classroom&&formik.touched.classroom && 'tomato' }
           />
+          {formik.touched.classroom && formik.errors.classroom && (
+              <Text color={'tomato'} >{formik.errors.classroom}</Text>
+            )}
         </Box>
       </SimpleGrid>
       {/* <Text>Time</Text> */}
@@ -358,13 +412,18 @@ const AddSection = () => {
               />
             </Box>
           </HStack>
+          <Text>{JSON.stringify(formik.values.same_time)}</Text>
           <Box textAlign={'center'}>
             <Text>All same time?</Text>
             <Checkbox
               size='md'
+              name='same_time'
+              value={formik.values.same_time}
               colorScheme='green'
               onChange={() => {
                 setIsSameTime(!isSameTime);
+                // formik.handleChange()
+                formik.setFieldValue('same_time',!isSameTime)
               }}
               defaultChecked
             />
@@ -383,10 +442,14 @@ const AddSection = () => {
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              isDisabled={isEmpty(formik.values.days)}
+              onBlur={formik.handleBlur}
             />
           </Box>
 
           <Box>
+            {/* <Text>{JSON.stringify(formik.values.to)}</Text>
+            <Text>{JSON.stringify(formik.errors)}</Text> */}
             <Text mb='8px'>To </Text>
             <Input
               type={'time'}
@@ -397,7 +460,13 @@ const AddSection = () => {
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              isDisabled={isEmpty(formik.values.from)}
+              onBlur={formik.handleBlur}
+              borderColor={formik.errors.from&&formik.touched.from && 'tomato' }
             />
+             { formik.errors.from &&formik.touched.from && (
+              <Text color={'tomato'} >{formik.errors.from||formik.errors.to}</Text>
+            )}
           </Box>
         </SimpleGrid>
         :
@@ -414,10 +483,12 @@ const AddSection = () => {
                 formik.handleChange(e)
                 // formik.values.days.includes(day)?formik.values[`${day}_from`] :null
             }}
+            onBlur={formik.handleBlur}
               value={formik.values[`${day}_from`]}
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              isDisabled={isEmpty(formik.values.days)}
             />
           </Box>
 
@@ -429,11 +500,16 @@ const AddSection = () => {
               id='to'
               name={`${day}_to`}
               onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               value={formik.values[`${day}_to`]}
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              isDisabled={isEmpty(formik.values[`${day}_from`])}
             />
+             { formik.errors[`${day}_from`] &&formik.touched[`${day}_from`] && (
+              <Text color={'tomato'} >{formik.errors[`${day}_from`]||formik.values[`${day}_to`]}</Text>
+            )}
           </Box>
           </SimpleGrid>
             )
@@ -665,7 +741,8 @@ const AddSection = () => {
       </Card>
         </Card>
       }
-      <Button onClick={formik.handleSubmit}>Add Section</Button>
+      {/* <Text>{JSON.stringify(!formik.isValid&&!isEmpty(is_course_validation)||!isEmpty(is_instructor_id_validation))}</Text> */}
+      <Button onClick={formik.handleSubmit} disabled={!formik.isValid||(!isEmpty(is_course_validation)||!isEmpty(is_instructor_id_validation))}>Add Section</Button>
     </Fragment>
     </FormikProvider>
   );
