@@ -1,6 +1,7 @@
 
 import * as Yup from 'yup';
 import moment from 'moment/moment';
+import { isEmpty } from '../../../components/ModalTemplate';
 
 export const isSameOrBefore = (startTime, endTime) => {
   console.log(endTime,"time")
@@ -116,6 +117,31 @@ export const addSectionValidation = Yup.object().shape({
       thursday_to: Yup.string().when(['same_time', 'days'], {
         is: (same_time, days) => !same_time && days.includes('thursday'),
         then: Yup.string().required("Time to is required"),
+      }),
+      tutorial_from:Yup.string().test(
+        "tutorial_from_test",
+        "End time must be after from time",
+        function(value) {
+          const { tutorial_to } = this.parent;
+          return isSameOrBefore(value, tutorial_to);
+        }
+      ),
+      tutorial_to: Yup.string().when('tutorial_day', {
+        is: ( tutorial_from) => !isEmpty(tutorial_from),
+        then: Yup.string().required("Tutorial to is required"),
+      }),
+
+      lab_from:Yup.string().test(
+        "lab_from_test",
+        "End time must be after from time",
+        function(value) {
+          const { lab_to } = this.parent;
+          return isSameOrBefore(value, lab_to);
+        }
+      ),
+      lab_to: Yup.string().when('lab_day', {
+        is: ( lab_day) => !isEmpty(lab_day),
+        then: Yup.string().required("Lab to is required"),
       }),
    
 

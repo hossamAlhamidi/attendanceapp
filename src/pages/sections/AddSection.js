@@ -605,10 +605,14 @@ const AddSection = () => {
               name='tutorial_from'
               onChange={formik.handleChange}
               value={formik.values.tutorial_from}
+              onBlur={formik.handleBlur}
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              isDisabled={isEmpty(formik.values.tutorial_day)}
+            
             />
+            
           </Box>
 
           <Box>
@@ -622,7 +626,16 @@ const AddSection = () => {
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              onBlur={formik.handleBlur}
+              isDisabled={isEmpty(formik.values.tutorial_from)}
+              borderColor={formik.errors.tutorial_from&&formik.touched.tutorial_from && 'tomato' }
             />
+             { formik.errors.tutorial_from &&formik.touched.tutorial_from && (
+              <Text color={'tomato'} >{formik.errors.tutorial_from||formik.errors.tutorial_to}</Text>
+            )}
+            { formik.errors.tutorial_to &&formik.touched.tutorial_to && (
+              <Text color={'tomato'} >{formik.errors.tutorial_to||formik.errors.tutorial_to}</Text>
+            )}
           </Box>
         </SimpleGrid>
                 
@@ -720,6 +733,8 @@ const AddSection = () => {
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              onBlur={formik.handleBlur}
+              isDisabled={isEmpty(formik.values.lab_day)}
             />
           </Box>
 
@@ -734,7 +749,16 @@ const AddSection = () => {
               // placeholder='@example Project Software Management '
               size='md'
               mb={'10px'}
+              onBlur={formik.handleBlur}
+              isDisabled={isEmpty(formik.values.lab_from)}
+              borderColor={formik.errors.lab_from&&formik.touched.lab_from && 'tomato' }
             />
+             { formik.errors.lab_from &&formik.touched.lab_from && (
+              <Text color={'tomato'} >{formik.errors.lab_from||formik.errors.to}</Text>
+            )}
+             { formik.errors.lab_to &&formik.touched.lab_to && (
+              <Text color={'tomato'} >{formik.errors.lab_to||formik.errors.to}</Text>
+            )}
           </Box>
         </SimpleGrid>
                 
