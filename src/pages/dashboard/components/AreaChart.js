@@ -40,38 +40,35 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-
-  scales:{
-    x: {
-        display: false
-    }
-},
-
-  responsive: true,
-  plugins: {
-    legend: {
-      display: false,
-      position: 'top',
-    },
-    title: {
-      display: false,
-      text: 'Chart.js Line Chart',
-    },
-  },
-};
-
 const AreaChart = () => {
   const [numOfRecord, setNumOfRecord] = useState(5);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
 
-  const handleStartDateChange = (event) => {
-    setFrom(new Date(event.target.value));
-  };
+  useMemo(()=>{
+    if(isEmpty(from)){
+      setTo('')
+    }
+  },[from])
+  const options = {
+    scales: {
+      x: {
+        display: false,
+      },
+    },
 
-  const handleEndDateChange = (event) => {
-    setTo(new Date(event.target.value));
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+        position: 'top',
+      },
+      title: {
+        position: 'bottom',
+        display: true,
+        text: !from?"Last Week":`from ${from} to ${to}`,
+      },
+    },
   };
   const {
     data: numberOfAbsences,
@@ -129,7 +126,7 @@ const AreaChart = () => {
       },
     ],
   };
-  console.log(moment(from).format('YYYY-MM-DD'))
+ 
   return (
     <Fragment>
       <Card alignSelf={'center'}>

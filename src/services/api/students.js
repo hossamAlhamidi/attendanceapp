@@ -4,7 +4,8 @@ import {
     GET_STUDENT_BY_ID_URL,
     GET_ABSENCE_FOR_STUDENT,
     DELETE_ABSENCE,
-    DELETE_STUDENT_FROM_SECTION
+    DELETE_STUDENT_FROM_SECTION,
+    ADD_EXCUSE
     } from '../apiUrl';
     import axiosInstance, { baseUrl } from '../config/axiosInstance';
     import axios from 'axios';
@@ -41,6 +42,12 @@ import {
 
     export const deleteAbsence = async (body)=>{
       const res = await axiosInstance.delete(baseUrl+DELETE_ABSENCE(body))
+    
+      return res.data
+    }
+
+    export const addExcuse = async (body)=>{
+      const res = await axiosInstance.post(baseUrl+ADD_EXCUSE,body)
     
       return res.data
     }

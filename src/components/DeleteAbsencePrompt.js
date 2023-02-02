@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useRef} from 'react';
 import {
   Box,
   Button,
@@ -13,22 +13,57 @@ import {
   Icon,
   Heading,
   Textarea,
-  Input
+  Input,
+  useToast,
+  Flex
 } from '@chakra-ui/react';
 
 // import PropTypes from 'prop-types';
 import { IoTrash, IoCheckmarkSharp } from 'react-icons/io5';
 import {RiAlertFill} from 'react-icons/ri'
-function Prompt({ isOpen, onClose, title, buttons, type, children,isUpload,setImage }) {
-  const isSuccessPrompt = type === 'success';
+function DeleteAbsencePrompt({ isOpen, onClose, title, buttons, type, children,isUpload,setImage,setReason,reason}) {
+    const inputFile = useRef(null);
+        const toast = useToast()
+    const handleFileSelect = (e) => {
+        e.preventDefault();
+    
+        if (!e || !e.target || !e.target.files || e.target.files.length === 0) {
+          return;
+        }
+        let temp = ''
+        // Validate the file being uploaded
+        const supportedIndicatorFileExtensions = ['pdf','png','jpg','jpeg'];
+        const fileName = inputFile.current?.files?.[0].name;
+        const fileExtention =
+          fileName?.substring(fileName?.lastIndexOf('.') + 1) || '';
+    
+        if (!supportedIndicatorFileExtensions.includes(fileExtention)) {
+          toast({
+            title: 'Unsupported file type',
+            description: 'Please upload a valid photo or pdf file',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+            position: 'top-right',
+          });
+          return;
+        }
 
+        setImage(e.target.files[0])
+        
+    }
+
+    const onButtonClick = () => {
+        inputFile.current.click();
+      
+      };
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
       isCentered={true}
       size={'md'}
-      //   variant="prompt"
+      //   variant="DeleteAbsencePrompt"
     >
       <ModalOverlay />
       <ModalContent pt={8} pb={8}>
@@ -46,40 +81,9 @@ function Prompt({ isOpen, onClose, title, buttons, type, children,isUpload,setIm
                color={'orange'}
               />
             </Box>
-            <Heading color={"orange"} fontWeight={'bold'}>Warning</Heading>
+            {/* <Heading color={"orange"} fontWeight={'bold'}>Warning</Heading> */}
           </Box>
             
-          {/* <Box
-            bg={isSuccessPrompt ? 'success.10' : 'danger.10'}
-            w="8rem"
-            height={'8rem'}
-            p={4}
-            color="white"
-            borderRadius={'50%'}
-            alignItems={'center'}
-            justifyContent={'center'}
-            // overflow={'hidden'}
-            display={'flex'}
-          >
-            <Box
-              bg={isSuccessPrompt ? 'success.300' : 'danger.500'}
-              width={'4rem'}
-              height={'4rem'}
-              borderRadius={'50%'}
-              display={'flex'}
-              alignItems={'center'}
-              justifyContent={'center'}
-            >
-              <Icon
-                as={IoTrash}
-                w={6}
-                h={6}
-              />
-              <RiAlertFill
-               size={24}
-              />
-            </Box>
-          </Box> */}
         </ModalHeader>
         <ModalCloseButton />
 
@@ -90,23 +94,25 @@ function Prompt({ isOpen, onClose, title, buttons, type, children,isUpload,setIm
           display={'flex'}
           flexDirection={'column'}
         >
-          <Text
+      <Text
             fontWeight={'bold'}
-            fontSize="xl"
+            fontSize="s"
             // noOfLines={2}
             maxWidth={'100%'}
             textAlign={'center'}
             variant={'titleText'}
             maxW={'70%'}
             alignSelf={'center'}
+            mb={5}
           >
             {title}
           </Text>
-          {isUpload&&<Box mt={5}>
-            <Box w={'100%'}>
-            <Textarea  placeholder='Reasons...' mb={5} />
+          {isUpload&&<Box w={'100%'} textAlign={'center'}>
+            <Box >
+            <Textarea w={'100%'}  placeholder='Reasons...' mb={5} value={reason} onChange={(e)=>setReason(e.target.value)} />
+            <input ref={inputFile} name='upload' type={'file'} mt={5} onChange={(e)=>handleFileSelect(e) } style={{display:'none'}}/>
+            <Button mx={'auto'} onClick={onButtonClick}>Upload file</Button>
             </Box>
-            <input name='upload' type={'file'} mt={5} onChange={(e)=>setImage(e.target.files[0])}/>
             </Box>}
           {children && <Box as="div">{children}</Box>}
           {buttons && (
@@ -137,7 +143,7 @@ function Prompt({ isOpen, onClose, title, buttons, type, children,isUpload,setIm
   );
 }
 
-// Prompt.propTypes = {
+// DeleteAbsencePrompt.propTypes = {
 //   isOpen: PropTypes.bool,
 //   onclose: PropTypes.func,
 //   children: PropTypes.any,
@@ -148,4 +154,4 @@ function Prompt({ isOpen, onClose, title, buttons, type, children,isUpload,setIm
 //   type: PropTypes.oneOf(['success', 'error']),
 // };
 
-export default Prompt;
+export default DeleteAbsencePrompt;

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState ,useMemo} from 'react';
+import React, { Fragment, useEffect, useState ,useMemo,useRef} from 'react';
 import {
   Tabs,
   TabList,
@@ -37,6 +37,9 @@ import { useDeleteAbsence } from '../../services/query/student';
 import Prompt from '../../components/Prompt'
 import { useAuthPermission } from '../../hook/useAuthPermission';
 import * as Yup from 'yup'
+import DeleteAbsencePrompt from '../../components/DeleteAbsencePrompt'
+import { useAddExcuse } from '../../services/query/student';
+// import cloudinary from 'cloudinary';
 
 const editStudentValidation = Yup.object().shape({
   student_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
@@ -46,6 +49,8 @@ const editStudentValidation = Yup.object().shape({
 
 })
 const StudentInfo = () => {
+  const [image,setImage] = useState("")
+  const [reason,setReason] = useState("");
   const navigate = useNavigate();
   const params = useParams();
   const location = useLocation();
@@ -56,6 +61,30 @@ const StudentInfo = () => {
   const { id } = params;
   const {is_admin,instructor_id} = useAuthPermission()
   const { student } = location.state || '';
+  const inputFile = useRef(null);
+  const submitImage = ()=>{
+
+    const data = new FormData();
+    data.append('file',image);
+    data.append('upload_preset','tzrozs1z')
+    data.append('cloud_name','dtadrokvy')
+    //https://api.cloudinary.com/v1_1/dtadrokvy/image/upload
+    fetch('https://api.cloudinary.com/v1_1/dtadrokvy/image/upload',{
+        method:'post',
+        body:data
+    })
+    .then((res)=>res.json())
+    .then((data)=>{
+        console.log(data)
+        addExcuse({
+          ...deletedItem,
+          reason:reason,
+          file:data?.url
+        })
+    }).catch((err)=>{
+        console.log(err)
+    })
+  }
     const initialValues = {
     student_id: "",
     student_name:"",
@@ -85,10 +114,12 @@ const StudentInfo = () => {
     },
     cacheTime: 0
   })
- 
+ console.log(image,"image")
+ console.log(reason,"reason")
+ console.log(deletedItem,"del")
   const {mutate:updateStudent} = useUpdateStudent({
     onSuccess:(res)=>{
-        console.log(res,"success")
+
         toast({
             title: 'Updated',
             description: 'Student Information has been Updated',
@@ -113,7 +144,7 @@ const StudentInfo = () => {
 
   const {data:studentAbsence,isLoading:isLoadingStudentAbsence,refetch:getAllAbsence} = useGetAbsenceForStudent(id,{
     onSuccess:(res)=>{
-      console.log(res,"abs")
+
     },
   })
 
@@ -143,6 +174,21 @@ const StudentInfo = () => {
     }
   })
 
+  const {mutate:addExcuse,isLoading:isLoadingExcuse,refetch:getAllExcuse} = useAddExcuse({
+    onSuccess:(res)=>{
+      handleDelete(deletedItem)
+    },
+    onError:(err)=>{
+      toast({
+        title: 'Excuse not added',
+        description: err?.response?.data?.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  })
   const handleCloseDeleteModal = () => {
     setDeletedItem(null);
     confirmPrompt.onClose();
@@ -151,31 +197,7 @@ const StudentInfo = () => {
     deleteAbsence(body)
  
   }
-  // useEffect(()=>{
-  //  mutate(id)
-  // },[id])
-  // const {data,mutate,isLoading} = useGetStudentById({
-  //     onSuccess:(res)=>{
-  //     //   console.log(res,"success")
-  //     },
-  //     onError:(err)=>{
-  //       console.log(err,"error");
-  //     //   toast({
-  //     //     title: 'Not Found',
-  //     //     description: err?.response?.data?.message,
-  //     //     status: 'error',
-  //     //     duration: 5000,
-  //     //     isClosable: true,
-  //     //     position: 'top-right',
-  //     //   });
-  //     }
-  //    })
-//   const initialValues = {
-//     student_id: studentInfo?.student_id,
-//     student_name: studentInfo?.student_name,
-//     email: studentInfo?.email,
-//     phone_number: studentInfo?.phone_number || '',
-//   };
+ 
 
   const formik = useFormik({
     initialValues: studentInfo,
@@ -224,7 +246,7 @@ const StudentInfo = () => {
    const sectionDetails = (section_id)=>{
      if(currentStudentAbsence){
       let filtered = currentStudentAbsence.filter((item)=>item.section_id==section_id)[0]
-      console.log(filtered,"filtered")
+     
       return {
         // course_id:filtered.course_id,
         course_name:filtered.course_name,
@@ -506,18 +528,24 @@ const StudentInfo = () => {
     </Tabs>
 }
 
-      <Prompt
+      <DeleteAbsencePrompt
         isOpen={confirmPrompt.isOpen}
         onClose={() => {
           handleCloseDeleteModal();
         }}
-        title={'Are you sure you want to delete this record?'}
+        title={'Please provide us with the reason'}
+        isUpload={true}
+        setImage={setImage}
+       
+        setReason={setReason}
+        reason={reason}
         buttons={[
           {
             label: 'Delete',
             type: 'danger',
             onPress: () => {
-              handleDelete(deletedItem);
+              // handleDelete(deletedItem);
+              submitImage()
             },
             styles: {
               paddingX: 50,

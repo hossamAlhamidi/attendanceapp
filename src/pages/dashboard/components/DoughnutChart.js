@@ -14,9 +14,9 @@ const options={
         display: false,
       },
       title: {
-        position:'bottom',
-        display: true,
-         text: 'Last Week',
+        // position:'bottom',
+        // display: true,
+        //  text: 'Last Week',
       
       },
     },
