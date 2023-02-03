@@ -131,7 +131,7 @@ const InstructorProfile = () => {
   const { values, handleChange, handleBlur } = formik;
   return (
     <Fragment>
-      <Text>{JSON.stringify(formik.errors)}</Text>
+      
       {
       !isLoadinginstructorInformation?
        <Card my={5}>

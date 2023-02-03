@@ -85,7 +85,8 @@ const config = {
                     bgColor:
                       props.colorMode === colorModes.dark
                         ? 'darkMode.primary.hover'
-                        : 'lightMode.primary.hover',
+                        : 'lightMode.primary.default',
+                     color:"white"    
                   },
                   _focus: {
                     bgColor:
@@ -351,7 +352,7 @@ const config = {
         
               // New Theme Color Variables
               primary: {
-                default: '#00024C',
+                default: '#145DA0',
                 hover: '#15187a',
                 gray: '#969696',
                 _dark: '#0f1163',
@@ -367,7 +368,7 @@ const config = {
               gray: '#EDF1F7',
               background: '#FFFFFF',
               textType1: '#33343D',
-              bodyBg: '#FAFAFD',
+              bodyBg: '#F7F6F6',
             },
           },
       

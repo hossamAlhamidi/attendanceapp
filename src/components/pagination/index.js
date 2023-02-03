@@ -24,7 +24,7 @@ const Pagination = (props) => {
     'darkMode.white'
   );
   const notSelectedBorderColor = useColorModeValue('lightMode.gray', '#252526');
-  const nonDisabledButtonColor = useColorModeValue('#00024c', '#1e1f23');
+  const nonDisabledButtonColor = useColorModeValue('lightMode.primary.default', '#1e1f23');
   const disabledButtonColor = useColorModeValue('#edf1f7', '#262627');
   const disabledIconColor = useColorModeValue('#ffffff', '#33343d');
   const iconColor = useColorModeValue('#969696', '#ffffff');

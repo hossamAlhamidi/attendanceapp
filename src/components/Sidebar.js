@@ -12,6 +12,8 @@ import {
     Text,
     useColorMode,
     useColorModeValue,
+    useToast,
+    Button
   } from '@chakra-ui/react';
   import React from 'react';
   import { NavLink, useNavigate } from 'react-router-dom';
@@ -22,8 +24,17 @@ import {
   import { GiBinoculars } from 'react-icons/gi';
   import { RiSearchLine } from 'react-icons/ri';
   import { useAuthPermission } from '../hook/useAuthPermission';
-
+  import { RiAlertFill,RiBookOpenFill,RiEdit2Fill ,RiLogoutBoxRLine} from 'react-icons/ri';
+  import {TfiBag} from 'react-icons/tfi'
+  import {SlUser} from 'react-icons/sl'
+  import {CiViewTimeline} from 'react-icons/ci'
+  import { useQueryClient } from 'react-query';
+  import { useLogoutInstructor } from '../services/query/login';
+  import { Navigate } from 'react-router-dom';
   const Sidebar = ({ isMobile, showSideNav, setShowSideNav }) => {
+    const navigate = useNavigate()
+    const toast = useToast()
+    const queryClient = useQueryClient();
     const {is_admin} = useAuthPermission()
     // const detection_rule_isVisible = getPermissionsAlt(permissions,"_indicator",userType).userActions.view
     const data = [
@@ -39,7 +50,7 @@ import {
         id: 2,
         name: 'Sections',
         path: '/sections',
-        icon: <MdGridView style={{ marginRight: 8, fontSize: '24px' }} />,
+        icon: <CiViewTimeline style={{ marginRight: 8, fontSize: '24px' }} />,
         isVisible:!is_admin
       },
       {
@@ -47,21 +58,28 @@ import {
         name: 'Courses',
         // path: '/search',
         path: '/courses',
-        icon: <RiSearchLine style={{ marginRight: 8, fontSize: '24px' }} />,
+        icon: <RiBookOpenFill style={{ marginRight: 8, fontSize: '24px' }} />,
         isVisible:is_admin
       },
       {
         id: 4,
         name: 'Students',
         path: '/students',
-        icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
+        icon: <TfiBag style={{ marginRight: 8, fontSize: '24px' }} />,
         isVisible:true
       },
       {
         id: 5,
         name: 'Instructors',
         path: '/instructors',
-        icon: <FiAlertTriangle style={{ marginRight: 8, fontSize: '24px' }} />,
+        icon: <SlUser style={{ marginRight: 8, fontSize: '24px' }} />,
+        isVisible:is_admin
+      },
+      {
+        id: 6,
+        name: 'Profile',
+        path: '/instructor',
+        icon: <RiEdit2Fill style={{ marginRight: 8, fontSize: '24px' }} />,
         isVisible:is_admin
       },
    
@@ -71,7 +89,7 @@ import {
     const colorMode = useColorModeValue('light', 'dark');
   
     const activeStyle = {
-      backgroundColor: '#1AA8E9',
+      backgroundColor: '#1152BA',
       width: '240px',
       display: 'flex',
       alignItems: 'center',
@@ -86,8 +104,55 @@ import {
       paddingLeft: '20px',
     };
    
-  
-    // const navigate = useNavigate();
+    
+    const {mutate,isLoading,refetch} = useLogoutInstructor({
+      onSuccess:(res)=>{
+        localStorage.removeItem('user');
+        queryClient.clear();
+        setTimeout(() => {
+          navigate('/login');
+          // window.location.reload()
+          // window.location.reload(); // removing this because WS logout toast wasn't persisting between authenticated pages and no-auth pages
+        }, 300);
+        toast({
+          title: 'Success',
+          description:"You have been logged out",
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+      onError:(err)=>{
+        console.log(err)
+        localStorage.removeItem('user');
+        queryClient.clear();
+        setTimeout(() => {
+          navigate('/login');
+        }, 300);
+        toast({
+          title: 'error',
+          description:"something went wrong",
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      }
+    })
+     const useLogOut = () => {
+      return () => {
+        mutate()
+        // localStorage.removeItem('user');
+        // queryClient.clear();
+        // setTimeout(() => {
+        //   navigate('/login');
+        //   // window.location.reload()
+        //   // window.location.reload(); // removing this because WS logout toast wasn't persisting between authenticated pages and no-auth pages
+        // }, 500);
+      };
+    };
+    const logout = useLogOut()
     return (
       <Box
         h={'100vh'}
@@ -96,7 +161,7 @@ import {
         overflowY='hidden'
         position={'fixed'}
         boxShadow='md'
-        bgColor={colorMode === 'light' ? '#263159' : '#1E1F23'}
+        bgColor={colorMode === 'light' ? '#145DA0' : '#1E1F23'}
         // color={colorMode === "light" ? "#00024C" : "#1E1F23"}
         zIndex={isMobile ? '999' : ''}
         w={showSideNav ? '270px' : isMobile ? '0px' : '65px'}
@@ -156,7 +221,7 @@ import {
             // height="calc(100% - 206px)"
             height={'auto'}
             flexDir={'column'}
-            overflowY={'scroll'}
+            // overflowY={'scroll'}
             overflowX={'hidden'}
             sx={{
               '::-webkit-scrollbar': {
@@ -181,7 +246,7 @@ import {
                         : { ...activeStyle, backgroundColor: '', width: '100%' }
                     }
                   >
-                    {/* {item.icon} */}
+                    {item.icon}
                     {showSideNav && item.name}
                   </NavLink>
                 )
@@ -190,7 +255,7 @@ import {
           </Flex>
   
           {/* Sidebar Footer Section */}
-          {/* <Box>
+          <Box>
             <Divider />
             <Flex
               flexDir={'column'}
@@ -216,8 +281,25 @@ import {
                   onChange={toggleColorMode}
                 />
               </Flex>
+              <Flex
+                flexDir={showSideNav ? 'row' : 'column-reverse'}
+                justifyContent='space-between'
+                alignItems={'center'}
+                mt={5}
+              >
+                <Text
+                  fontWeight={400}
+                  fontSize={showSideNav ? '14px' : '12px'}
+                  color='#fff'
+                >
+                Logout
+                </Text>
+                <Button bg={'transparent'} isLoading={isLoading} onClick={logout} p={0} _hover={{border:'1px solid white'}}>
+                <RiLogoutBoxRLine style={{ marginRight: 8,cursor:'pointer', fontSize: '24px', color:'red'}} />
+                </Button>
+              </Flex>
             </Flex>
-          </Box> */}
+          </Box>
         </Box>
       </Box>
     );

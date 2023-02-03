@@ -62,7 +62,7 @@ export const AuthPageLayout = ({ children }) => {
       position="relative"
     >
       <>
-        <Navbar></Navbar>
+        {/* <Navbar></Navbar> */}
         <Box
           width={
             showSideNav
@@ -79,8 +79,8 @@ export const AuthPageLayout = ({ children }) => {
           top={0}
           left={270}
           // borderBottom="1px solid #EDF1F7"
-          borderBottomWidth="1px"
-          borderBottomColor={useColorModeValue('lightMode.gray', '#EDF1F720')}
+          // borderBottomWidth="1px"
+          // borderBottomColor={useColorModeValue('lightMode.gray', '#EDF1F720')}
           // boxShadow={"0px 4px 4px rgba(0, 0, 0, 0.25)"}
           display={isMobile ? 'flex' : 'flex'}
           alignItems={isMobile ? 'center' : 'center'}

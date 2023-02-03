@@ -254,7 +254,7 @@ const AddSection = () => {
             
           />
       </Box>
-     <Text>{JSON.stringify(formik.errors)}</Text>
+     
       <SimpleGrid columns={[1, 2]} spacing={10}>
         <Box>
           <Text mb='8px'>Section ID </Text>
@@ -412,7 +412,7 @@ const AddSection = () => {
               />
             </Box>
           </HStack>
-          <Text>{JSON.stringify(formik.values.same_time)}</Text>
+         
           <Box textAlign={'center'}>
             <Text>All same time?</Text>
             <Checkbox

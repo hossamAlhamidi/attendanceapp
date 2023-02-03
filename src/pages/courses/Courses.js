@@ -361,7 +361,7 @@ const Courses = () => {
         }}
       >
         <form onSubmit={formik.handleSubmit}>
-          <Text>{JSON.stringify(formik.errors)}</Text>
+        
           <CourseForm
             formik={formik}
             isLoading={isUpdating}
