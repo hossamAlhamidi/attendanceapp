@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from 'react-query';
-import { GET_STUDENT,UPDATE_STUDENT,GET_STUDENT_BY_ID,GET_ABSENCE_FOR_STUDENT,DELETE_ABSENCE,DELETE_STUDENT_FROM_SECTION,ADD_EXCUSE } from '../queryKeys';
-import { getStudentById,updateStudent , getStudentByIdAlt,getAbsenceForStudent,deleteAbsence,deleteStudentFromSection,addExcuse} from '../api/students';
+import { GET_STUDENT,UPDATE_STUDENT,GET_STUDENT_BY_ID,GET_ABSENCE_FOR_STUDENT,DELETE_ABSENCE,DELETE_STUDENT_FROM_SECTION,ADD_EXCUSE,GET_EXCUSE_FOR_STUDENT } from '../queryKeys';
+import { getStudentById,updateStudent , getStudentByIdAlt,getAbsenceForStudent,deleteAbsence,deleteStudentFromSection,addExcuse,getExcuseForStudent} from '../api/students';
 
 
 export const useGetStudentById = (options)=>{
@@ -35,6 +35,15 @@ export const useGetAbsenceForStudent = (id,options)=>{
     const {data,isLoading,refetch} = useQuery(
         [GET_ABSENCE_FOR_STUDENT,id],
         ()=>getAbsenceForStudent(id),
+        {...options}
+    )
+    return {data,isLoading,refetch}
+}
+
+export const useGetExcuseForStudent = (id,options)=>{
+    const {data,isLoading,refetch} = useQuery(
+        [GET_EXCUSE_FOR_STUDENT,id],
+        ()=>getExcuseForStudent(id),
         {...options}
     )
     return {data,isLoading,refetch}

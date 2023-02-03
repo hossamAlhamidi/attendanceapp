@@ -24,5 +24,29 @@ export const studentAbsenceTableHeader = [
       accessor: 'absence_date',
       
     }, 
+    
+   
+  ];
+
+
+  export const studentExcuseTableHeader = [
+  
+    {
+      label: 'Absence Date',
+      accessor: 'absence_date',
+      
+    }, 
+    {
+      label: 'Reason',
+      accessor: 'reason',
+      
+    }, 
+    {
+      label: 'Uploaded File',
+      accessor: 'file',
+      type:'file'
+      
+    }, 
+    
    
   ];

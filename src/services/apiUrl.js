@@ -11,6 +11,7 @@ export const ADD_INSTRUCTOR = 'instructor/register/'
 export const ADD_ALL_STUDENTS_TO_SECTION = 'students/sections/all'
 export const ADD_STUDENT_TO_SECTION = 'students/sections'
 export const GET_ABSENCE_FOR_STUDENT =(id)=> `student/absence/${id}`
+export const GET_EXCUSE_FOR_STUDENT =(id)=> `student/excuse/${id}`
 export const DELETE_ABSENCE = ({student_id,section_id,absence_date})=>`student/absence/?student_id=${student_id}&section_id=${section_id}&absence_date=${absence_date}`
 export const ADD_EXCUSE='student/excuse/'
 export const LOGIN = 'instructor/login'

@@ -1,7 +1,7 @@
 
 import { isEmpty } from "../ModalTemplate";
 // import { useDateFormat } from "../hooks";
-
+import { Image } from "@chakra-ui/react";
 const timeFormat = (obj)=>{
   let time = ''
    for(let day in obj){
@@ -32,8 +32,8 @@ function TableCell({ c, data, index, customCells }) {
       // dateFormat(new Date(data[c.accessor]), "timeago");
     else return "-";
   }
-//   if (c.type === "custom")
-//     return customCells && customCells[c.accessor]?.renderCell(data);
+  if (c.type === "file")
+  return !isEmpty(data[c.accessor])?<a href={`${data[c.accessor]}`} target={'_blank'} rel={'noreferrer'} style={{color:'#7eadf4',fontWeight:'bold'}}>View File</a>:'-'
 
   if (!isEmpty(data[c.accessor])) return data[c.accessor];
   else return "-";
