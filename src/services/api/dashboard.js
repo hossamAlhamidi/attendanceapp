@@ -26,9 +26,9 @@ import {
         return res.data;
     }
 
-    export const getNumberAbsences = async ({number,from,to})=>{
+    export const getNumberAbsences = async ({from,to})=>{
 
-        const res = await axiosInstance.get(baseUrl+NUMBER_ABSENCES({number,from,to}));
+        const res = await axiosInstance.get(baseUrl+NUMBER_ABSENCES({from,to}));
     
         return res.data;
     }

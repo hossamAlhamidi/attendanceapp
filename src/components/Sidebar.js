@@ -188,7 +188,7 @@ import {
                 alt='Cight'
               /> */}
               <Text fontWeight={700} fontSize='22px' color='#fff'>
-                TEMP
+                Attend Me
               </Text>
             </Flex>
           )}

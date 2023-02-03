@@ -24,7 +24,46 @@ export const CustomSelect = ({
   const backgroundColor = useColorModeValue("white","darkmode.widgetBg")
   const textColor = useColorModeValue("black","white")
   // colorMode=="light"?"white":"#1E1F23"
-   
+  const colourStyles = {
+    control: (styles) => ({ ...styles, backgroundColor: backgroundColor,borderColor:colorMode=='light'?"#e2e6f0":"#e2e6f040"}),
+    option: (styles) => {
+      return {
+        ...styles,
+        backgroundColor: colorMode=="light"?"white":"#1E1F23",
+        color: textColor,
+        // cursor: isDisabled ? 'not-allowed' : 'default',
+        ':hover': {
+          backgroundColor:'grey',
+          color: 'white',
+        },
+        // ':active': {
+        //   ...styles[':active'],
+        //   backgroundColor: 
+        //        "pink"
+            
+        // },
+      };
+    },
+    multiValue: (styles) => {  // circle it self
+      // const color = chroma(data.color);
+      return {
+        ...styles,
+        backgroundColor: colorMode=='light'?"lightgray":"darkgrey",
+      };
+    },
+    multiValueLabel: (styles) => ({
+      ...styles,
+      color: colorMode=="light"?"black":"white",  // label inside circle
+    }),
+    // multiValueRemove: (styles) => ({
+    //   ...styles,
+    //   color: "green",
+    //   ':hover': {
+    //     backgroundColor: "blue",
+    //     color: 'black',
+    //   },
+    // }),
+  };
   const onChange = (option) => {
     form.setFieldValue(
       field.name,
@@ -97,7 +136,7 @@ export const CustomSelect = ({
         // isMulti={isMulti}
         maxMenuHeight={200}
         // colorScheme="black"
-        // styles={colourStyles}
+        styles={colourStyles}
         // selectedOptionStyle="check"
         onBlur={()=>{
           // formik.setFieldError('instructor_id',"")

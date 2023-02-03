@@ -41,8 +41,8 @@ export const useGetMostCourses = (number,options)=>{
 
 export const useGetNumberAbsences = ({number,from,to},options)=>{
     const {data,isLoading,refetch} = useQuery(
-        [NUMBER_ABSENCES,number,from,to],
-        ()=>getNumberAbsences({number,from,to}),
+        [NUMBER_ABSENCES,from,to],
+        ()=>getNumberAbsences({from,to}),
         {
             ...options
         }

@@ -30,5 +30,5 @@ export const UPDATE_COURSE = 'courses/'
 export const MOST_INSTRUCTORS = (number)=>`dashboard/instructor/${number}`
 export const MOST_SECTIONS = (number)=>`dashboard/section/${number}`
 export const MOST_COURSES = (number)=>`dashboard/courses/${number}`
-export const NUMBER_ABSENCES = ({number,from,to})=>`dashboard/absence/${number}/${from}/${to}`
+export const NUMBER_ABSENCES = ({from,to})=>`dashboard/absence/${from}/${to}`
 export const TOTAL_COUNT=`dashboard/count`

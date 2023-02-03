@@ -162,6 +162,7 @@ const InstructorProfile = () => {
                  <FormControl>
                  <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Name</FormLabel>
                  <Input
+                 
                     placeholder='Name'
                     name='instructor_name'
                     id='instructor_name'

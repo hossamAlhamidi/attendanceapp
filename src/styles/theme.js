@@ -1,5 +1,30 @@
 import { extendTheme } from "@chakra-ui/react";
+import { inputAnatomy } from '@chakra-ui/anatomy'
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { useColorModeValue } from "@chakra-ui/react";
+const { definePartsStyle, defineMultiStyleConfig } =
+  createMultiStyleConfigHelpers(inputAnatomy.keys)
 
+//   const baseStyle = definePartsStyle({
+//     // define the part you're going to style
+//     field: {
+//       border: '1px solid black',
+//       borderColor: 'red',
+//       background: 'red',
+//       borderRadius: 'full',
+//       color:"red",
+  
+//       // Let's also provide dark mode alternatives
+//       _dark: {
+//         borderColor: 'green',
+//         background: 'green',
+//       },
+//     },
+//     defaultProps: {
+//       variant: 'field',
+//     },
+//   })
+//  const inputTheme = defineMultiStyleConfig({ baseStyle })
 const config = {
     initialColorMode: 'light',
     useSystemColorMode: false,
@@ -9,7 +34,7 @@ const config = {
     light: 'light',
     dark: 'dark',
   };
-
+   
   export const customTheme = extendTheme({
     styles: {
         global: (props) => ({
@@ -34,7 +59,26 @@ const config = {
           },
           config,
           components: {
-          
+            Input: {
+              baseStyle: (props) => ({
+                field: {
+                  bg:  props.colorMode === colorModes.light ? 'white' : 'black',
+                  borderColor: props.colorMode === colorModes.light ? 'lightgrey' : 'darkgrey',
+                  borderWidth: 1,
+                  // color:props.colorMode === colorModes.light ? 'black' : 'white'
+                  _focus: {
+                    boxShadow: "0 0 2px 2px #1AA8E9",
+                    borderWidth: 0,
+                  }
+                },
+              }),
+              sizes: {},
+              variants: {},
+              defaultProps: {
+                variant: null,
+              },
+            },
+         
             Button: {
               variants: {
                 primary: (props) => ({

@@ -41,8 +41,9 @@ ChartJS.register(
 );
 
 const AreaChart = () => {
-  const [numOfRecord, setNumOfRecord] = useState(5);
-  const [from, setFrom] = useState('');
+  // const [numOfRecord, setNumOfRecord] = useState(5);
+   const last_week = moment().subtract(7, 'days').format("YYYY-MM-DD")
+  const [from, setFrom] = useState(last_week);
   const [to, setTo] = useState('');
 
   useMemo(()=>{
@@ -66,7 +67,7 @@ const AreaChart = () => {
       title: {
         position: 'bottom',
         display: true,
-        text: !from?"Last Week":`from ${from} to ${to}`,
+        text: from==last_week?"Last Week":`from ${from} to ${to}`,
       },
     },
   };
@@ -75,7 +76,7 @@ const AreaChart = () => {
     isLoading,
     refetch,
   } = useGetNumberAbsences(
-    { number: numOfRecord, from: from, to: to },
+    {  from: from, to: to },
     {
       onSuccess: (res) => {
         console.log(res, 'success');
