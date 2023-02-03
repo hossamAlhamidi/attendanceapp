@@ -24,6 +24,20 @@ ChartJS.register(
 );
 
 export const options = {
+  scales: {
+    y: {
+      display: false,
+         grid: {
+        display: false
+    },
+    },
+    x: {
+      // display: false,
+         grid: {
+        display: false
+    },
+    },
+  },
   responsive: true,
   plugins: {
     legend: {
