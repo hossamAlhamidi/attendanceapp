@@ -51,6 +51,8 @@ const editStudentValidation = Yup.object().shape({
   email: Yup.string().email().required('Required'),
   phone_number: Yup.string().length(10),
 });
+const cloudName = process.env.REACT_APP_CLOUD_NAME;
+const uploadPreset = process.env.REACT_APP_UPLOAD_PRESET;
 const StudentInfo = () => {
   const [image, setImage] = useState('');
   const [reason, setReason] = useState('');
@@ -64,12 +66,13 @@ const StudentInfo = () => {
   const { id } = params;
   const { is_admin, instructor_id } = useAuthPermission();
   const { student } = location.state || '';
-
+  const [isLoadingPostImage,setIsLoadingPostImage]= useState(false)
   const submitImage = () => {
     const data = new FormData();
     data.append('file', image);
-    data.append('upload_preset', 'tzrozs1z');
-    data.append('cloud_name', 'dtadrokvy');
+    data.append('upload_preset',uploadPreset);
+    data.append('cloud_name', cloudName);
+    setIsLoadingPostImage(true)
     //https://api.cloudinary.com/v1_1/dtadrokvy/image/upload
     fetch('https://api.cloudinary.com/v1_1/dtadrokvy/image/upload', {
       method: 'post',
@@ -78,6 +81,7 @@ const StudentInfo = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        setIsLoadingPostImage(false)
         addExcuse({
           ...deletedItem,
           reason: reason,
@@ -170,6 +174,7 @@ const StudentInfo = () => {
         console.log(res, 'deleted');
         confirmPrompt.onClose();
         getAllAbsence();
+        getAllExcuse()
         toast({
           title: 'Deleted',
           description: 'Student Absence has been Deleted',
@@ -202,7 +207,7 @@ const StudentInfo = () => {
     onError: (err) => {
       toast({
         title: 'Excuse not added',
-        description: err?.response?.data?.message,
+        description: 'Something went wrong',
         status: 'error',
         duration: 5000,
         isClosable: true,
@@ -212,6 +217,8 @@ const StudentInfo = () => {
   });
   const handleCloseDeleteModal = () => {
     setDeletedItem(null);
+    setImage("")
+    setReason("")
     confirmPrompt.onClose();
   };
   const handleDelete = (body) => {
@@ -255,7 +262,7 @@ const StudentInfo = () => {
   }, [studentExcuse]);
 
 
-
+ // could be enhanced by doing an array to loop through components
   return (
     <Fragment>
       <Box my={5}>
@@ -346,6 +353,7 @@ const StudentInfo = () => {
         title={'Please provide us with the reason'}
         isUpload={true}
         setImage={setImage}
+        image={image}
         setReason={setReason}
         reason={reason}
         buttons={[
@@ -354,12 +362,18 @@ const StudentInfo = () => {
             type: 'danger',
             onPress: () => {
               // handleDelete(deletedItem);
-              submitImage();
+              isEmpty(image?.name)? addExcuse({
+                ...deletedItem,
+                reason: reason, 
+                file:""            
+              }):submitImage();
+              // submitImage();
+            
             },
             styles: {
               paddingX: 50,
             },
-            isLoading: isLoadingDelete,
+            isLoading: isLoadingPostImage||isLoadingExcuse||isLoadingDelete,
           },
           {
             label: 'Cancel',

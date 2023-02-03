@@ -17,11 +17,11 @@ import {
   useToast,
   Flex
 } from '@chakra-ui/react';
-
+import { isEmpty } from './ModalTemplate';
 // import PropTypes from 'prop-types';
 import { IoTrash, IoCheckmarkSharp } from 'react-icons/io5';
 import {RiAlertFill} from 'react-icons/ri'
-function DeleteAbsencePrompt({ isOpen, onClose, title, buttons, type, children,isUpload,setImage,setReason,reason}) {
+function DeleteAbsencePrompt({ isOpen, onClose, title, buttons, type, children,isUpload,image,setImage,setReason,reason}) {
     const inputFile = useRef(null);
         const toast = useToast()
     const handleFileSelect = (e) => {
@@ -57,6 +57,7 @@ function DeleteAbsencePrompt({ isOpen, onClose, title, buttons, type, children,i
         inputFile.current.click();
       
       };
+      console.log(image,"img")
   return (
     <Modal
       isOpen={isOpen}
@@ -112,6 +113,7 @@ function DeleteAbsencePrompt({ isOpen, onClose, title, buttons, type, children,i
             <Textarea w={'100%'}  placeholder='Reasons...' mb={5} value={reason} onChange={(e)=>setReason(e.target.value)} />
             <input ref={inputFile} name='upload' type={'file'} mt={5} onChange={(e)=>handleFileSelect(e) } style={{display:'none'}}/>
             <Button mx={'auto'} onClick={onButtonClick}>Upload file</Button>
+            {!isEmpty(image?.name)&&<Text>{image?.name}</Text>}
             </Box>
             </Box>}
           {children && <Box as="div">{children}</Box>}
