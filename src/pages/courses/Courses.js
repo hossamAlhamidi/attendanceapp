@@ -40,9 +40,10 @@ import { TbPencil } from 'react-icons/tb';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { useDeleteCourse,useUpdateCourse } from '../../services/query/courses';
 import * as Yup from 'yup'
-
+import { TOTAL_COUNT } from '../../services/queryKeys';
+import { useQueryClient } from 'react-query';
 const addCourseValidation = Yup.object().shape({
-  course_id:Yup.string().min(3).max(7).required("Required"),
+  course_id:Yup.string().matches(/^\d+$/, 'Input can only contain numbers').min(3).max(7).required('Required'),
   course_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
   abbreviation:Yup.string().min(3).max(6).required("Required"),
   course_hours:Yup.number().min(1).max(6).required("Required")
@@ -55,6 +56,7 @@ const Courses = () => {
   const confirmPrompt = useDisclosure();
   const [deletedItem, setDeletedItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient()
   const initValues = {
     course_name: '',
     course_id: '',
@@ -129,6 +131,7 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
+      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
     },
     onError: (err) => {
       console.log(err);
@@ -185,6 +188,7 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
+      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
     },
     onError: (err) => {
       toast({

@@ -41,7 +41,8 @@ import { isEmpty } from '../../components/ModalTemplate';
 import Prompt from '../../components/Prompt';
 import { useDeleteInstructor } from '../../services/query/instructors';
 import * as Yup from 'yup'
-
+import { useQueryClient } from 'react-query';
+import { TOTAL_COUNT } from '../../services/queryKeys';
 const addInstructorValidation = Yup.object().shape({
   instructor_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
   instructor_id:Yup.string().min(3).max(12).required("Required"),
@@ -55,6 +56,7 @@ const Instructors = () => {
   const confirmPrompt = useDisclosure();
   const [deletedItem,setDeletedItem] = useState(null)
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const toast = useToast()
     const { isOpen, onOpen, onClose } = useDisclosure();
     const {data:instructors,isLoading:isLoadingInstructor,refetch:getAllInstructors} = useGetAllInstructor({
@@ -105,6 +107,7 @@ const Instructors = () => {
               isClosable: true,
               position: 'top-right',
             });
+            queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
           },
           onError:(err)=>{
             console.log(err)
@@ -132,6 +135,7 @@ const Instructors = () => {
           isClosable: true,
           position: 'top-right',
         });
+        queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
       },
       onError:(err)=>{
         toast({

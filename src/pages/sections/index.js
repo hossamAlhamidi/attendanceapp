@@ -38,9 +38,12 @@ import { useDeleteSection } from '../../services/query/sections';
 import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { TbPencil } from 'react-icons/tb';
 import Prompt from '../../components/Prompt';
+import { useQueryClient } from 'react-query';
+import { TOTAL_COUNT } from '../../services/queryKeys';
 
 const Sections = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [search,setSearch] = useState("")
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -103,6 +106,7 @@ const Sections = () => {
           isClosable: true,
           position: 'top-right',
         });
+        queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
       },
       onError:(err)=>{
         toast({

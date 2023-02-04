@@ -75,7 +75,7 @@ export const AuthPageLayout = ({ children }) => {
           // bg={useColorModeValue('#fff', '#1E1F23')}
           bg={useColorModeValue('lightMode.bodyBg', 'darkMode.bodyBg')}
           h="64px"
-          position={'sticky'}
+          // position={'sticky'}
           top={0}
           left={270}
           // borderBottom="1px solid #EDF1F7"

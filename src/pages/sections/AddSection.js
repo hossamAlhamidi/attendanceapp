@@ -37,6 +37,7 @@ import { useGetAllInstructor } from '../../services/query/instructors';
 import { useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
+import { TOTAL_COUNT } from '../../services/queryKeys';
 import { addSectionValidation } from './utils';
 const AddSection = () => {
   const [is_instructor_id_validation,set_is_Instructor_id_validation]=useState('required')
@@ -126,6 +127,7 @@ const AddSection = () => {
       });
       // queryClient.invalidateQueries([ADD_SECTION]);
       queryClient.refetchQueries({ queryKey: [GET_SECTIONS] })
+      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
       navigate("/dashboard")
     },
     onError:(err)=>{

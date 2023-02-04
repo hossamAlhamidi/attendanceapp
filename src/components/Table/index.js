@@ -1,4 +1,4 @@
-import { Box, Table, TableContainer } from "@chakra-ui/react";
+import { Box, Table, TableContainer,useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { isEmpty } from "../ModalTemplate";
 import TableHead from "./TableHead";
@@ -16,9 +16,10 @@ const TableTemplate = ({
   // useEffect(() => {
   //   setFilteredData(data);
   // }, [data]);
+  const tableBgColor = useColorModeValue("white",'darkMode.widgetBg')
   return (
     <Box>
-      <TableContainer>
+      <TableContainer bg={tableBgColor}>
         {!isLoading && isEmpty(data) ? (
           <>{emptyState}</>
         ) : (

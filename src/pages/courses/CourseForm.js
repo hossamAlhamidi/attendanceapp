@@ -29,6 +29,7 @@ const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
       <Box mx={'5px'}>
         <Text mb='8px'>Course Id </Text>
         <Input
+          // type={'number'}
           id='course_id'
           name='course_id'
           onChange={formik.handleChange}
