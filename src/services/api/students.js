@@ -28,14 +28,15 @@ import {
       return res.data
     }
     
-    export const updateStudent = async ({id,body})=>{
-        const res = await axiosInstance.put(baseUrl+UPDATE_STUDENT_URL+id,body)
+    export const updateStudent = async ({body})=>{
+        const res = await axiosInstance.put(baseUrl+UPDATE_STUDENT_URL,body)
 
         return res.data;
     }
 
     
     export const getAbsenceForStudent = async (id)=>{
+      console.log(id,"id")
       const res = await axiosInstance.get(baseUrl+GET_ABSENCE_FOR_STUDENT(id))
     
       return res.data
