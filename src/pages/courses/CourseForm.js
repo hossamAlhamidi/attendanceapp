@@ -61,7 +61,7 @@ const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
             )}
         {
         <Box>
-        <Text mb='8px'>abbreviation </Text>
+        <Text mb='8px'>Department Abbreviation </Text>
         <Input
           id='abbreviation'
           name='abbreviation'

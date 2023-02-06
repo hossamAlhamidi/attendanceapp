@@ -226,7 +226,7 @@ const Sections = () => {
             totalCount={
               isEmpty(search)
                 ? data?.length || 0
-                : handleFilterData(search).length
+                : handleFilterData(search)?.length||0
             }
             pageSize={pageSize}
             onPageChange={(page) => setCurrentPage(page)}

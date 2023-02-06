@@ -43,7 +43,7 @@ import * as Yup from 'yup'
 import { TOTAL_COUNT } from '../../services/queryKeys';
 import { useQueryClient } from 'react-query';
 const addCourseValidation = Yup.object().shape({
-  course_id:Yup.string().matches(/^\d+$/, 'Input can only contain numbers').min(3).max(7).required('Required'),
+  course_id:Yup.string().min(3).max(7).required('Required'),
   course_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
   abbreviation:Yup.string().min(3).max(6).required("Required"),
   course_hours:Yup.number().min(1).max(6).required("Required")
@@ -328,7 +328,7 @@ const Courses = () => {
           totalCount={
             isEmpty(search)
               ? coursesData?.length || 0
-              : handleFilterData(search).length
+              : handleFilterData(search)?.length||0
           }
           pageSize={pageSize}
           onPageChange={(page) => setCurrentPage(page)}
