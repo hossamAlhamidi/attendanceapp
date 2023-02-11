@@ -44,8 +44,8 @@ import * as Yup from 'yup'
 import { useQueryClient } from 'react-query';
 import { TOTAL_COUNT } from '../../services/queryKeys';
 const addInstructorValidation = Yup.object().shape({
+  instructor_id: Yup.string().matches(/^\d+$/, 'ID can only contain numbers').min(3).max(12).required("Required"),
   instructor_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
-  instructor_id:Yup.string().min(3).max(12).required("Required"),
   email:Yup.string().email().required("Required"),
   phone_number:Yup.string().length(10)
 })
@@ -249,12 +249,14 @@ const Instructors = () => {
             onPageChange={(page) => setCurrentPage(page)}
           />
         </Flex>
-<ModalTemplate isOpen={isOpen} onClose={onClose} title={'Add Course'} >
+<ModalTemplate isOpen={isOpen} onClose={onClose} title={'Add Course'} onCloseComplete={() => {
+          formik.resetForm({ values: initialValues });
+        }} >
         <form onSubmit={formik.handleSubmit}>
           <Box mx={'5px'}>
             <Text mb='8px'>Instructor ID </Text>
             <Input
-              type={'number'}
+              // type={'number'}
               id='instructor_id'
               name='instructor_id'
               onChange={formik.handleChange}

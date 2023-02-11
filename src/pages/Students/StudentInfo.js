@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState, useMemo, useRef } from 'react';
+import React, { Fragment, useState, useMemo } from 'react';
 import {
   Tabs,
   TabList,
@@ -6,34 +6,16 @@ import {
   Tab,
   TabPanel,
   Box,
-  Text,
-  Input,
-  Card,
-  CardBody,
-  SimpleGrid,
-  Button,
-  Flex,
   useToast,
-  Stack,
-  Icon,
   useDisclosure,
-  Spinner,
-  FormLabel,
-  FormControl,
 } from '@chakra-ui/react';
-import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
 import { isEmpty } from '../../components/ModalTemplate';
 import { IoIosArrowBack } from 'react-icons/io';
-import { HiLockClosed, HiLockOpen } from 'react-icons/hi';
-import { TbPencil } from 'react-icons/tb';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 
-import TableTemplate from '../../components/Table';
-import { studentAbsenceTableHeader } from '../../data/studentAbsence.header';
 import { useDeleteAbsence,useAddExcuse,useGetAbsenceForStudent,useUpdateStudent,useGetStudentByIdAlt,useGetExcuseForStudent } from '../../services/query/student';
-import Prompt from '../../components/Prompt';
 import { useAuthPermission } from '../../hook/useAuthPermission';
 import * as Yup from 'yup';
 import DeleteAbsencePrompt from '../../components/DeleteAbsencePrompt';
