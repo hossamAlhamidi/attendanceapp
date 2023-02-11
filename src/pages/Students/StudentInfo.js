@@ -50,6 +50,7 @@ const editStudentValidation = Yup.object().shape({
   student_id: Yup.string().min(3).max(12).required('Required'),
   email: Yup.string().email().required('Required'),
   phone_number: Yup.string().length(10),
+  mac_address: Yup.string().required("Required"),
 });
 const cloudName = process.env.REACT_APP_CLOUD_NAME;
 const uploadPreset = process.env.REACT_APP_UPLOAD_PRESET;
@@ -97,6 +98,7 @@ const StudentInfo = () => {
     student_name: '',
     email: '',
     phone_number: '',
+    mac_address:''
   };
   const [studentInfo, setStudentInfo] = useState(initialValues);
   //   if (!student) {
@@ -117,6 +119,7 @@ const StudentInfo = () => {
         student_name: res[0]?.student_name,
         email: res[0]?.email,
         phone_number: res[0]?.phone_number || '',
+        mac_address: res[0]?.mac_address || '',
       });
     },
     onError: (err) => {
@@ -238,6 +241,7 @@ const StudentInfo = () => {
           student_name: values.student_name,
           email: values.email,
           phone_number: values.phone_number,
+          mac_address: values.mac_address,
         },
       });
       refetch();

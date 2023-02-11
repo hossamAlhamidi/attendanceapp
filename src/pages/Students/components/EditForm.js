@@ -97,6 +97,23 @@ const EditForm = ({formik,isLoadingStudentInformation,isEdit,setIsEdit}) => {
               <Text color={'tomato'} >{formik.errors.phone_number}</Text>
             )}
                  </FormControl>
+
+                 <FormControl>
+                 <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Mac Address</FormLabel>
+                 <Input
+                    placeholder='05********'
+                    name='mac_address'
+                    id='mac_address'
+                    value={values?.mac_address}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    isDisabled={!isEdit}
+                    borderColor={formik.errors.mac_address&&formik.touched.mac_address && 'tomato' }
+                  />
+                    {formik.touched.mac_address && formik.errors.mac_address && (
+              <Text color={'tomato'} >{formik.errors.mac_address}</Text>
+            )}
+                 </FormControl>
                  
                 </SimpleGrid>
                 
