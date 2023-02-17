@@ -45,7 +45,7 @@ import { useQueryClient } from 'react-query';
 const addCourseValidation = Yup.object().shape({
   course_id:Yup.string().min(3).max(7).required('Required'),
   course_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
-  abbreviation:Yup.string().min(3).max(6).required("Required"),
+  abbreviation:Yup.string().min(2).max(6).required("Required"),
   course_hours:Yup.number().min(1).max(6).required("Required")
 })
 const Courses = () => {
