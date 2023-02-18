@@ -146,7 +146,14 @@ const AreaChart = () => {
                 w={'50px'}
                 name={'from'}
                 value={from}
-                onChange={(e) => setFrom(e.target.value)}
+                max={moment().format('YYYY-MM-DD')}
+                onChange={(e) => {
+                  setFrom(e.target.value)
+                  setTo(moment.min([
+                    moment(e.target.value).add(30, "days"),
+                    moment(),
+                  ]).format("YYYY-MM-DD"))
+                }}
                 // value={from ? from.toISOString().substr(0, 10) : ""}
                 // onChange={handleStartDateChange}
                 // max={to ? to.toISOString().substr(0, 10) : null}
@@ -160,7 +167,10 @@ const AreaChart = () => {
                 name={'to'}
                 value={to}
                 min={moment(from).format('YYYY-MM-DD')}
-                max={moment(from).add(30, 'days').format('YYYY-MM-DD')}
+                max={moment.min([
+                  moment(from).add(30, "days"),
+                  moment(),
+                ]).format("YYYY-MM-DD")}
                 isDisabled={isEmpty(from)}
                 onChange={(e) => setTo(e.target.value)}
                 // value={to ? to.toISOString().substr(0, 10) : ""}
