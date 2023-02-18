@@ -1,14 +1,11 @@
 import React, { Fragment, useState, useMemo } from 'react';
 import {
-  SimpleGrid,
   Box,
   Card,
   Flex,
-  CardBody,
   CardHeader,
   Heading,
   Text,
-  Select,
   Input,
 } from '@chakra-ui/react';
 import {
@@ -23,10 +20,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import {
-  useGetMostSections,
-  useGetNumberAbsences,
-} from '../../../services/query/dashboard';
+import { useGetNumberAbsences } from '../../../services/query/dashboard';
 import { isEmpty } from '../../../components/ModalTemplate';
 import moment from 'moment/moment';
 ChartJS.register(
@@ -42,15 +36,15 @@ ChartJS.register(
 
 const AreaChart = () => {
   // const [numOfRecord, setNumOfRecord] = useState(5);
-   const last_week = moment().subtract(7, 'days').format("YYYY-MM-DD")
+  const last_week = moment().subtract(7, 'days').format('YYYY-MM-DD');
   const [from, setFrom] = useState(last_week);
   const [to, setTo] = useState('');
 
-  useMemo(()=>{
-    if(isEmpty(from)){
-      setTo('')
+  useMemo(() => {
+    if (isEmpty(from)) {
+      setTo('');
     }
-  },[from])
+  }, [from]);
   const options = {
     scales: {
       x: {
@@ -67,7 +61,7 @@ const AreaChart = () => {
       title: {
         position: 'bottom',
         display: true,
-        text: from==last_week?"Last Week":`from ${from} to ${to}`,
+        text: from == last_week ? 'Last Week' : `from ${from} to ${to}`,
       },
     },
   };
@@ -76,7 +70,7 @@ const AreaChart = () => {
     isLoading,
     refetch,
   } = useGetNumberAbsences(
-    {  from: from, to: to },
+    { from: from, to: to },
     {
       onSuccess: (res) => {
         console.log(res, 'success');
@@ -127,7 +121,7 @@ const AreaChart = () => {
       },
     ],
   };
- 
+
   return (
     <Fragment>
       <Card alignSelf={'center'}>

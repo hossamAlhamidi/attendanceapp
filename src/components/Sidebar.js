@@ -80,7 +80,7 @@ import {
         name: 'Profile',
         path: '/instructor',
         icon: <RiEdit2Fill style={{ marginRight: 8, fontSize: '24px' }} />,
-        isVisible:is_admin
+        isVisible:true
       },
    
     ];
@@ -90,7 +90,7 @@ import {
   
     const activeStyle = {
       backgroundColor: '#1152BA',
-      width: '240px',
+      // width: '240px',
       display: 'flex',
       alignItems: 'center',
       fontSize: '14px',

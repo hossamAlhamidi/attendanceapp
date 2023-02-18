@@ -100,7 +100,10 @@ const config = {
                   _focus: {
                     boxShadow: "0 0 2px 2px #1AA8E9",
                     borderWidth: 0,
-                  }
+                  },
+                  '&::placeholder': {
+                    color: props.colorMode === colorModes.light ? 'gray.600' : 'gray.400',
+                  },
                 },
               }),
               sizes: {},

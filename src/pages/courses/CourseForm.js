@@ -2,26 +2,11 @@ import React, { Fragment } from 'react';
 import {
   Box,
   Input,
-  useColorModeValue,
-  InputGroup,
   Button,
   Stack,
-  InputLeftElement,
-  Card,
-  CardHeader,
-  Select,
-  CardFooter,
-  Heading,
-  CardBody,
   Text,
   Flex,
-  SimpleGrid,
-  useDisclosure,
-  Label,
-  useToast,
   Checkbox,
-  CheckboxGroup,
-  Icon,
 } from '@chakra-ui/react';
 const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
   return (
@@ -39,11 +24,13 @@ const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
           size='md'
           mb={'10px'}
           isDisabled={isEditing}
-          borderColor={formik.errors.course_id&&formik.touched.course_id && 'tomato' }
+          borderColor={
+            formik.errors.course_id && formik.touched.course_id && 'tomato'
+          }
         />
-         {formik.touched.course_id && formik.errors.course_id && (
-              <Text color={'tomato'} >{formik.errors.course_id}</Text>
-            )}
+        {formik.touched.course_id && formik.errors.course_id && (
+          <Text color={'tomato'}>{formik.errors.course_id}</Text>
+        )}
         <Text mb='8px'>Course Name </Text>
         <Input
           id='course_name'
@@ -54,31 +41,37 @@ const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
           placeholder='@example Project Software Management '
           size='md'
           mb={'10px'}
-          borderColor={formik.errors.course_name&&formik.touched.course_name && 'tomato' }
+          borderColor={
+            formik.errors.course_name && formik.touched.course_name && 'tomato'
+          }
         />
-         {formik.touched.course_name && formik.errors.course_name && (
-              <Text color={'tomato'} >{formik.errors.course_name}</Text>
-            )}
+        {formik.touched.course_name && formik.errors.course_name && (
+          <Text color={'tomato'}>{formik.errors.course_name}</Text>
+        )}
         {
-        <Box>
-        <Text mb='8px'>Department Abbreviation </Text>
-        <Input
-          id='abbreviation'
-          name='abbreviation'
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.abbreviation}
-          placeholder='@example i.e SWE'
-          size='md'
-          mb={'10px'}
-          isDisabled={isEditing}
-          borderColor={formik.errors.abbreviation&&formik.touched.abbreviation && 'tomato' }
-        />
-         {formik.touched.abbreviation && formik.errors.abbreviation && (
-              <Text color={'tomato'} >{formik.errors.abbreviation}</Text>
+          <Box>
+            <Text mb='8px'>Department Abbreviation </Text>
+            <Input
+              id='abbreviation'
+              name='abbreviation'
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.abbreviation}
+              placeholder='@example i.e SWE'
+              size='md'
+              mb={'10px'}
+              isDisabled={isEditing}
+              borderColor={
+                formik.errors.abbreviation &&
+                formik.touched.abbreviation &&
+                'tomato'
+              }
+            />
+            {formik.touched.abbreviation && formik.errors.abbreviation && (
+              <Text color={'tomato'}>{formik.errors.abbreviation}</Text>
             )}
-        </Box>
-}
+          </Box>
+        }
         <Text mb='8px'>Course Hours </Text>
         <Input
           id='course_hours'
@@ -92,11 +85,15 @@ const CourseForm = ({ formik, isLoading, onClose, isEditing }) => {
           placeholder='@example 3'
           size='md'
           mb={'10px'}
-          borderColor={formik.errors.course_hours&&formik.touched.course_hours && 'tomato' }
+          borderColor={
+            formik.errors.course_hours &&
+            formik.touched.course_hours &&
+            'tomato'
+          }
         />
-         {formik.touched.course_hours && formik.errors.course_hours && (
-              <Text color={'tomato'} >{formik.errors.course_hours}</Text>
-            )}
+        {formik.touched.course_hours && formik.errors.course_hours && (
+          <Text color={'tomato'}>{formik.errors.course_hours}</Text>
+        )}
         {/* <CheckboxGroup colorScheme='green' defaultValue={['has_tutorial']}> */}
         <Stack my={4} spacing={[1, 5]} direction='row'>
           <Checkbox

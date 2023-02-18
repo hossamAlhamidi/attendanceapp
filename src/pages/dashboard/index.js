@@ -6,7 +6,6 @@ import LineChart from './components/LineChart'
 import AreaChart from './components/AreaChart'
 import Sections from '../sections'
 import Totals from './components/Totals'
-import fire from '../../assets/img/fire.svg'
 const Dashboard = () => {
   return (
     <Fragment>

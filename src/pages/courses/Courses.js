@@ -2,25 +2,13 @@ import React, { Fragment, useState, useMemo } from 'react';
 import {
   Box,
   Input,
-  useColorModeValue,
   InputGroup,
   Button,
-  Stack,
   InputLeftElement,
-  Card,
-  CardHeader,
   Select,
-  CardFooter,
-  Heading,
-  CardBody,
-  Text,
   Flex,
-  SimpleGrid,
   useDisclosure,
-  Label,
   useToast,
-  Checkbox,
-  CheckboxGroup,
   Icon,
 } from '@chakra-ui/react';
 import CourseForm from './CourseForm';
@@ -30,24 +18,26 @@ import Pagination from '../../components/pagination';
 import EmptyState from '../../components/EmptyState';
 import { FiSearch } from 'react-icons/fi';
 import { useGetAllCourses } from '../../services/query/courses';
-import CardStructure from '../../components/Card';
 import ModalTemplate from '../../components/ModalTemplate';
 import { useFormik } from 'formik';
 import { useAddCourse } from '../../services/query/courses';
 import TableTemplate from '../../components/Table';
 import { courseTableHeader } from '../../data/courses.headers';
 import { TbPencil } from 'react-icons/tb';
-import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
-import { useDeleteCourse,useUpdateCourse } from '../../services/query/courses';
-import * as Yup from 'yup'
+import { CgTrashEmpty } from 'react-icons/cg';
+import { useDeleteCourse, useUpdateCourse } from '../../services/query/courses';
+import * as Yup from 'yup';
 import { TOTAL_COUNT } from '../../services/queryKeys';
 import { useQueryClient } from 'react-query';
 const addCourseValidation = Yup.object().shape({
-  course_id:Yup.string().min(3).max(7).required('Required'),
-  course_name:Yup.string().matches(/^[^\d]+$/, 'Name cannot contain numbers').min(3).required("Required"),
-  abbreviation:Yup.string().min(2).max(6).required("Required"),
-  course_hours:Yup.number().min(1).max(6).required("Required")
-})
+  course_id: Yup.string().min(3).max(7).required('Required'),
+  course_name: Yup.string()
+    .matches(/^[^\d]+$/, 'Name cannot contain numbers')
+    .min(3)
+    .required('Required'),
+  abbreviation: Yup.string().min(2).max(6).required('Required'),
+  course_hours: Yup.number().min(1).max(6).required('Required'),
+});
 const Courses = () => {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,7 +46,7 @@ const Courses = () => {
   const confirmPrompt = useDisclosure();
   const [deletedItem, setDeletedItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const initValues = {
     course_name: '',
     course_id: '',
@@ -131,7 +121,7 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
-      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
+      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] });
     },
     onError: (err) => {
       console.log(err);
@@ -147,8 +137,7 @@ const Courses = () => {
   });
 
   // update course
-  const { mutate: updateCourse, isLoading: isUpdating } =
-  useUpdateCourse({
+  const { mutate: updateCourse, isLoading: isUpdating } = useUpdateCourse({
     onSuccess: () => {
       // setEditCognnaAdmin(res.data);
       editModal.onClose();
@@ -188,7 +177,7 @@ const Courses = () => {
         isClosable: true,
         position: 'top-right',
       });
-      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] })
+      queryClient.refetchQueries({ queryKey: [TOTAL_COUNT] });
     },
     onError: (err) => {
       toast({
@@ -212,18 +201,17 @@ const Courses = () => {
   const [formData, setFormData] = useState(initialValues);
   const formik = useFormik({
     initialValues: formData,
-    validationSchema:addCourseValidation,
+    validationSchema: addCourseValidation,
     enableReinitialize: true,
-    isInitialValid:isEditing?true:false,
+    isInitialValid: isEditing ? true : false,
     onSubmit: (values) => {
       if (isEditing) {
         let payload = {
-         course_id:values.course_id,
-         course_name:values.course_name,
-         course_hours:values.course_hours
-
+          course_id: values.course_id,
+          course_name: values.course_name,
+          course_hours: values.course_hours,
         };
-        updateCourse(payload)
+        updateCourse(payload);
       } else {
         addCourse(values);
       }
@@ -236,7 +224,7 @@ const Courses = () => {
     let courseData = {
       course_id: course.course_id,
       course_name: course.course_name,
-      abbreviation: course.course_id.split(" ")[0],
+      abbreviation: course.course_id.split(' ')[0],
       course_hours: course.course_hours,
       has_tutorial: course.has_tutorial,
       has_lab: course.has_lab,
@@ -328,7 +316,7 @@ const Courses = () => {
           totalCount={
             isEmpty(search)
               ? coursesData?.length || 0
-              : handleFilterData(search)?.length||0
+              : handleFilterData(search)?.length || 0
           }
           pageSize={pageSize}
           onPageChange={(page) => setCurrentPage(page)}
@@ -365,7 +353,6 @@ const Courses = () => {
         }}
       >
         <form onSubmit={formik.handleSubmit}>
-        
           <CourseForm
             formik={formik}
             isLoading={isUpdating}

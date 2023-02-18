@@ -1,39 +1,23 @@
-import React, { Fragment, useRef,useState,useMemo } from 'react';
+import React, { Fragment, useRef, useState, useMemo } from 'react';
 import {
   Box,
   Input,
   useColorModeValue,
   InputGroup,
   Button,
-  Stack,
   InputLeftElement,
-  Card,
-  CardHeader,
-  CardFooter,
-  Heading,
-  CardBody,
   Text,
   Select,
   Flex,
-  SimpleGrid,
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
   useToast,
   Icon,
-  useDisclosure
+  useDisclosure,
 } from '@chakra-ui/react';
-import { CgRowFirst, CgTrashEmpty } from 'react-icons/cg';
-import { IoIosArrowBack, IoIosClose } from 'react-icons/io';
+import { CgTrashEmpty } from 'react-icons/cg';
+import { IoIosArrowBack } from 'react-icons/io';
 import { AiOutlineEye } from 'react-icons/ai';
 import { useGetAllSectionStudents } from '../../services/query/sections';
-import { useParams,useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { isEmpty } from '../../components/ModalTemplate';
 import TableTemplate from '../../components/Table';
 import { studentsSectionTableHeader } from '../../data/studentsSection.headers';
@@ -46,20 +30,20 @@ import ModalTemplate from '../../components/ModalTemplate';
 import Pagination from '../../components/pagination';
 import { useAddStudentToSection } from '../../services/query/sections';
 import { useDeleteStudentFromSection } from '../../services/query/student';
-import * as Yup from 'yup'
+import * as Yup from 'yup';
 
 const addStudentValidation = Yup.object().shape({
-  student_id: Yup.string().min(3)
-  .matches(/^\d+$/, 'Input can only contain numbers')
-  .max(10, 'Input cannot be more than 10 characters')
-  .required('Input is required'),
-  
-})
+  student_id: Yup.string()
+    .min(3)
+    .matches(/^\d+$/, 'Input can only contain numbers')
+    .max(10, 'Input cannot be more than 10 characters')
+    .required('Input is required'),
+});
 const SectionInner = () => {
-    const [search, setSearch] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(20);
-    const [deletedItem,setDeletedItem] = useState(null)
+  const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [deletedItem, setDeletedItem] = useState(null);
   const params = useParams();
   const navigate = useNavigate();
   const confirmPrompt = useDisclosure();
@@ -67,7 +51,7 @@ const SectionInner = () => {
   const inputFile = useRef(null);
   const toast = useToast();
   const warningPrompt = useDisclosure();
-  const [promptErrMsg , setPromptErrMsg] = useState("")
+  const [promptErrMsg, setPromptErrMsg] = useState('');
   const addStudentModal = useDisclosure();
   if (isEmpty(id)) {
     navigate(-1);
@@ -78,33 +62,34 @@ const SectionInner = () => {
     isLoading: isLoadingSectionStudents,
     refetch,
   } = useGetAllSectionStudents(id, {
-    onSuccess: (res) => {
-     
-    },
+    onSuccess: (res) => {},
     onError: (err) => {
       console.log(err, 'err');
     },
   });
 
-    const currentData = useMemo(() => {
-     if (sectionStudents) {
+  const currentData = useMemo(() => {
+    if (sectionStudents) {
       const firstPageIndex = (currentPage - 1) * pageSize;
       const lastPageIndex = firstPageIndex + pageSize;
       return [...sectionStudents].slice(firstPageIndex, lastPageIndex);
     }
     return [];
-  }, [sectionStudents,currentPage,pageSize]);
+  }, [sectionStudents, currentPage, pageSize]);
 
-    const keys = ['student_id','student_name']
+  const keys = ['student_id', 'student_name'];
   const handleFilterData = (param) => {
     if (isEmpty(param)) {
       return currentData;
     }
-  
+
     let filtered = sectionStudents?.filter((item) => {
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i];
-        if (item[key] && item[key].toString().toLowerCase().includes(param.toLowerCase())) {
+        if (
+          item[key] &&
+          item[key].toString().toLowerCase().includes(param.toLowerCase())
+        ) {
           return true;
         }
       }
@@ -114,107 +99,109 @@ const SectionInner = () => {
     return filtered;
   };
   // add students from csv
- const {mutate:addAllStudents,data,isLoading:isLoadingAddAll} = useAddAllStudentsToSection({
-  onSuccess:(res)=>{
-    console.log(res,"res")
-    toast({
-      title: 'Success',
-      description:"All students are added",
-      status: 'success',
-      duration: 5000,
-      isClosable: true,
-      position: 'top-right',
-    });
-    refetch()
-  },
-  onError:(err)=>{
-  
-    setPromptErrMsg(err?.response?.data?.message)
-    warningPrompt.onOpen();
-    refetch()
-  }
- })
-
-  const {mutate:addStudent,isLoading:isLoadingAddStudent} =useAddStudentToSection({
-    onSuccess:(res)=>{
+  const {
+    mutate: addAllStudents,
+    data,
+    isLoading: isLoadingAddAll,
+  } = useAddAllStudentsToSection({
+    onSuccess: (res) => {
+      console.log(res, 'res');
       toast({
         title: 'Success',
-        description:"Student is added",
+        description: 'All students are added',
         status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'top-right',
       });
-      addStudentModal.onClose()
-      formik.resetForm()
-      refetch()
+      refetch();
     },
-    onError:(err)=>{
-      toast({
-        title: 'Error',
-        description:err?.response?.data?.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
-  })
+    onError: (err) => {
+      setPromptErrMsg(err?.response?.data?.message);
+      warningPrompt.onOpen();
+      refetch();
+    },
+  });
 
-  // delete 
-  const {mutate:deleteStudentFromSection,isLoading:isLoadingDelete} = useDeleteStudentFromSection({
-    onSuccess:(res)=>{
-      console.log(res,'deleted')
-      confirmPrompt.onClose();
-      refetch()
-      toast({
-        title: 'Deleted',
-        description: 'Student is deleted from this section',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    },
-    onError:(err)=>{
-      toast({
-        title: 'Not Deleted',
-        description: err?.response?.data?.message,
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
-  })
+  const { mutate: addStudent, isLoading: isLoadingAddStudent } =
+    useAddStudentToSection({
+      onSuccess: (res) => {
+        toast({
+          title: 'Success',
+          description: 'Student is added',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+        addStudentModal.onClose();
+        formik.resetForm();
+        refetch();
+      },
+      onError: (err) => {
+        toast({
+          title: 'Error',
+          description: err?.response?.data?.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+    });
+
+  // delete
+  const { mutate: deleteStudentFromSection, isLoading: isLoadingDelete } =
+    useDeleteStudentFromSection({
+      onSuccess: (res) => {
+        console.log(res, 'deleted');
+        confirmPrompt.onClose();
+        refetch();
+        toast({
+          title: 'Deleted',
+          description: 'Student is deleted from this section',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+      onError: (err) => {
+        toast({
+          title: 'Not Deleted',
+          description: err?.response?.data?.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+          position: 'top-right',
+        });
+      },
+    });
 
   const handleCloseDeleteModal = () => {
     setDeletedItem(null);
     confirmPrompt.onClose();
   };
-  const handleDelete = (body)=>{
-    deleteStudentFromSection(body)
- 
-  }
+  const handleDelete = (body) => {
+    deleteStudentFromSection(body);
+  };
 
- const initValues ={
-  student_id: '',
-  section_id: id,
-  
-}
- const formik = useFormik({
-  initialValues: initValues ,
-  validationSchema:addStudentValidation,
-  isInitialValid:false,
-  onSubmit: (values) => {
-    console.log(values)
-     addStudent(values);
-   
-    
-    // setInitialValues(initValues)
-  },
-});
- // read file
+  const initValues = {
+    student_id: '',
+    section_id: id,
+  };
+  const formik = useFormik({
+    initialValues: initValues,
+    validationSchema: addStudentValidation,
+    isInitialValid: false,
+    onSubmit: (values) => {
+      console.log(values);
+      addStudent(values);
+
+      // setInitialValues(initValues)
+    },
+  });
+  // read file
   const onButtonClick = () => {
     inputFile.current.click();
   };
@@ -224,7 +211,6 @@ const SectionInner = () => {
     if (!e || !e.target || !e.target.files || e.target.files.length === 0) {
       return;
     }
-    let temp = ''
     // Validate the file being uploaded
     const supportedIndicatorFileExtensions = ['csv'];
     const fileName = inputFile.current?.files?.[0].name;
@@ -260,54 +246,44 @@ const SectionInner = () => {
         });
         return;
       }
-      let filtered_text = text.match(/^[0-9];.*/gimu)
-      const arr = filtered_text.map((element)=>{
-          return element.replaceAll(/^[0-9];/g,"")
-      })
-    //  console.log(text,"text")
-      console.log(arr)
-      let temp = arr.map((element,i)=>{
-       return element.split(";")
-      })
+      let filtered_text = text.match(/^[0-9];.*/gimu);
+      const arr = filtered_text.map((element) => {
+        return element.replaceAll(/^[0-9];/g, '');
+      });
+      //  console.log(text,"text")
+      console.log(arr);
+      let temp = arr.map((element, i) => {
+        return element.split(';');
+      });
 
-      // let arr_student = []
-      // temp.map((element)=>{
-      //   arr_student.push({
-      //     id:element[0],
-      //     name:element[1]
-      //   })
- 
-      // })
-      let arr_id = temp.map((element)=>element[0])
+      let arr_id = temp.map((element) => element[0]);
       // console.log(arr_student,"obj")
-      console.log(arr_id,"id")
 
-     
       addAllStudents({
-        student_array:arr_id,
-        section_id:id
-      })
+        student_array: arr_id,
+        section_id: id,
+      });
       // addModal.onOpen();
     };
     reader.readAsText(e.target.files[0]);
 
     // Clear the input so if we select the same file again it works
     e.target.value = '';
-    return ;
+    return;
   };
-//  console.log(temp,"temp")
+  //  console.log(temp,"temp")
   return (
     <Fragment>
       {/* <Text>{temp}</Text> */}
       <Flex justifyContent={'space-between'} alignItems={'center'}>
         <Box mr={5}>
-       <IoIosArrowBack
+          <IoIosArrowBack
             size={24}
-            cursor="pointer"
+            cursor='pointer'
             onClick={() => navigate(-1)}
           />
         </Box>
-          
+
         <input
           ref={inputFile}
           onChange={(e) => handleFileSelect(e)}
@@ -317,74 +293,84 @@ const SectionInner = () => {
         />
         {/* <Text m={'10px'}>Upload CSV file to add Students</Text> */}
         <Flex flexWrap={'wrap'} alignItems={'center'}>
-        <Button onClick={onButtonClick} m={1}>Add CSV file to add students </Button>
-        <Button m={1} onClick={addStudentModal.onOpen}> add student</Button>
-         <Box maxW={['100%', '50%']} my={'10px'}>
-          <InputGroup>
-            <InputLeftElement
-              pointerEvents='none'
-              color='gray.300'
-              fontSize='1.2em'
-            />
+          <Button onClick={onButtonClick} m={1}>
+            Add CSV file to add students{' '}
+          </Button>
+          <Button m={1} onClick={addStudentModal.onOpen}>
+            {' '}
+            add student
+          </Button>
+          <Box maxW={['100%', '50%']} my={'10px'}>
+            <InputGroup>
+              <InputLeftElement
+                pointerEvents='none'
+                color='gray.300'
+                fontSize='1.2em'
+              />
 
-            <Input
-              placeholder='Search...'
-              onChange={(e) => {
-                setSearch(e.target.value);
-              }}
-              value={search}
-            />
-            <InputLeftElement children={<FiSearch color='green.500' />} />
-          </InputGroup>
-        </Box>
+              <Input
+                placeholder='Search...'
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+                value={search}
+              />
+              <InputLeftElement children={<FiSearch color='green.500' />} />
+            </InputGroup>
+          </Box>
         </Flex>
       </Flex>
 
       <Box my={'20px'}>
         <TableTemplate
-        columns={studentsSectionTableHeader}
-        data={isEmpty(search)?currentData:handleFilterData(search)}
-        actions={[
-          {
-            aria_label: 'View ',
-            icon: (
-              <Icon
-                as={AiOutlineEye}
-                h={4}
-                w={4}
-                color={useColorModeValue(
-                  'lightMode.primary.default',
-                  'darkMode.secondary.gray'
-                )}
-              />
-            ),
-            onPress: (item) =>
-              navigate(`/students/${item.student_id}`, {
-                // state: { type: item.organization_type },
-              }),
-           
-          },
-          {
-            aria_label: 'Delete student',
-            icon: <Icon as={CgTrashEmpty} color={'red'} />,
-            onPress: (item) => {
-              console.log(item,"item")
-              setDeletedItem({
-                student_id:item?.student_id,
-                section_id:item?.section_id,
-              })
-
-              confirmPrompt.onOpen();
+          columns={studentsSectionTableHeader}
+          data={isEmpty(search) ? currentData : handleFilterData(search)}
+          actions={[
+            {
+              aria_label: 'View ',
+              icon: (
+                <Icon
+                  as={AiOutlineEye}
+                  h={4}
+                  w={4}
+                  color={useColorModeValue(
+                    'lightMode.primary.default',
+                    'darkMode.secondary.gray'
+                  )}
+                />
+              ),
+              onPress: (item) =>
+                navigate(`/students/${item.student_id}`, {
+                  // state: { type: item.organization_type },
+                }),
             },
-          },
-         ]}
-        isLoading={isLoadingSectionStudents}
-        emptyState={<EmptyState message={!search?`No Students in this section yet`:`No results`}/>}
+            {
+              aria_label: 'Delete student',
+              icon: <Icon as={CgTrashEmpty} color={'red'} />,
+              onPress: (item) => {
+                console.log(item, 'item');
+                setDeletedItem({
+                  student_id: item?.student_id,
+                  section_id: item?.section_id,
+                });
+
+                confirmPrompt.onOpen();
+              },
+            },
+          ]}
+          isLoading={isLoadingSectionStudents}
+          emptyState={
+            <EmptyState
+              message={
+                !search ? `No Students in this section yet` : `No results`
+              }
+            />
+          }
         />
-         <Flex w="100%" paddingTop="24px">
+        <Flex w='100%' paddingTop='24px'>
           <Flex flex={1}></Flex>
           <Select
-            w="190px"
+            w='190px'
             defaultValue={20}
             onChange={(e) => {
               setPageSize(parseInt(e.target.value));
@@ -407,10 +393,13 @@ const SectionInner = () => {
             onPageChange={(page) => setCurrentPage(page)}
           />
         </Flex>
-       
       </Box>
 
-      <ModalTemplate isOpen={addStudentModal.isOpen} onClose={addStudentModal.onClose} title={'Add Course'} >
+      <ModalTemplate
+        isOpen={addStudentModal.isOpen}
+        onClose={addStudentModal.onClose}
+        title={'Add Course'}
+      >
         <form onSubmit={formik.handleSubmit}>
           <Box mx={'5px'}>
             <Text mb='8px'>Student ID </Text>
@@ -423,10 +412,14 @@ const SectionInner = () => {
               placeholder='439... '
               size='md'
               mb={'10px'}
-              borderColor={formik.errors.student_id&&formik.touched.student_id && 'tomato' }
+              borderColor={
+                formik.errors.student_id &&
+                formik.touched.student_id &&
+                'tomato'
+              }
             />
             {formik.touched.student_id && formik.errors.student_id && (
-              <Text color={'tomato'} >{formik.errors.student_id}</Text>
+              <Text color={'tomato'}>{formik.errors.student_id}</Text>
             )}
             <Text mb='8px'>Section Id </Text>
             <Input
@@ -439,38 +432,43 @@ const SectionInner = () => {
               mb={'10px'}
               isDisabled
             />
-            
 
-           
-{/* <CheckboxGroup colorScheme='green' defaultValue={['has_tutorial']}> */}
- 
-{/* </CheckboxGroup> */}
+            {/* <CheckboxGroup colorScheme='green' defaultValue={['has_tutorial']}> */}
+
+            {/* </CheckboxGroup> */}
           </Box>
           <Flex alignItems={'center'}>
-            <Button isDisabled={!formik.isValid} isLoading={isLoadingAddStudent} type='submit' m={'10px'} colorScheme={'blue'}>
+            <Button
+              isDisabled={!formik.isValid}
+              isLoading={isLoadingAddStudent}
+              type='submit'
+              m={'10px'}
+              colorScheme={'blue'}
+            >
               Submit
             </Button>
-            <Button type='button' m={'10px'} onClick={()=>{
-              addStudentModal.onClose()
-              formik.resetForm()
-            }}>
+            <Button
+              type='button'
+              m={'10px'}
+              onClick={() => {
+                addStudentModal.onClose();
+                formik.resetForm();
+              }}
+            >
               Cancel
             </Button>
           </Flex>
         </form>
       </ModalTemplate>
 
+      <Prompt
+        isOpen={warningPrompt.isOpen}
+        onClose={warningPrompt.onClose}
+        title={promptErrMsg}
+        type={'success'}
+      />
 
       <Prompt
-    isOpen={ warningPrompt.isOpen}
-    onClose={
-      warningPrompt.onClose
-    }
-    title={promptErrMsg}
-    type={'success'}
-  />
-
-<Prompt
         isOpen={confirmPrompt.isOpen}
         onClose={() => {
           handleCloseDeleteModal();

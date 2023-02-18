@@ -1,19 +1,7 @@
 import React, { Fragment } from 'react';
-import {
-  SimpleGrid,
-  Spinner,
-  Box,
-  Card,
-  Flex,
-  CardBody,
-  CardHeader,
-  Heading,
-  Text,
-  Image,
-} from '@chakra-ui/react';
+import { SimpleGrid, Spinner, Box } from '@chakra-ui/react';
 import { useGetTotalCount } from '../../../services/query/dashboard';
 import CountCard from '../../../components/CountCard';
-import fire from '../../../assets/img/fire.svg';
 const Totals = () => {
   const { data, isLoading, refetch } = useGetTotalCount({});
 
@@ -24,20 +12,20 @@ const Totals = () => {
       icon: '',
     },
     {
-        type: 'Courses',
-        total: data?.courses_count,
-        icon: '',
-      },
-      {
-        type: 'Sections',
-        total: data?.sections_count,
-        icon: '',
-      },
-      {
-        type: 'Instructors',
-        total: data?.instructors_count,
-        icon: '',
-      },
+      type: 'Courses',
+      total: data?.courses_count,
+      icon: '',
+    },
+    {
+      type: 'Sections',
+      total: data?.sections_count,
+      icon: '',
+    },
+    {
+      type: 'Instructors',
+      total: data?.instructors_count,
+      icon: '',
+    },
   ];
   return (
     <Fragment>

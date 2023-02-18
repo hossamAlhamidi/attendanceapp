@@ -101,7 +101,7 @@ const EditForm = ({formik,isLoadingStudentInformation,isEdit,setIsEdit}) => {
                  <FormControl>
                  <FormLabel color={'f3f3f3'} fontSize={"sm"} mb={3}>Mac Address</FormLabel>
                  <Input
-                    placeholder='05********'
+                    placeholder='38:89:5D:8C:A3:F8'
                     name='mac_address'
                     id='mac_address'
                     value={values?.mac_address}

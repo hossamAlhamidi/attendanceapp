@@ -31,24 +31,19 @@ function TableBody({
   
 }) {
   const textColor = useColorModeValue("lightMode.darkText", "darkMode.white");
-  const optionIconColor = useColorModeValue(
-    "lightMode.secondary.gray",
-    "darkMode.secondary.gray"
-  );
-  const useHeaderStyleProps = () => ({
-    fontWeight: 'medium',
-    color: useColorModeValue(
-      'lightMode.secondary.gray',
-      'darkMode.secondary.gray'
-    ),
-    letterSpacing: 0,
-    textTransform: 'capitalize',
-    fontSize: 'smaller',
-  });
 
-  const menuItemHoverBg = useColorModeValue("#00000020", "#FFFFFF30");
-  const menuBG = useColorModeValue("lightMode.background", "darkMode.widgetBg");
-  const headerStyleProps = useHeaderStyleProps();
+  // const useHeaderStyleProps = () => ({
+  //   fontWeight: 'medium',
+  //   color: useColorModeValue(
+  //     'lightMode.secondary.gray',
+  //     'darkMode.secondary.gray'
+  //   ),
+  //   letterSpacing: 0,
+  //   textTransform: 'capitalize',
+  //   fontSize: 'smaller',
+  // });
+
+
 
   return (
     <Tbody mt={"18px"} w={"fit-content"} justifyContent={"space-between"}>
