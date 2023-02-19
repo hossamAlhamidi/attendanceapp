@@ -60,7 +60,7 @@ const DoughnutChart = () => {
 
   const data = {
     // labels: ['22354', '22344', '12554', '32545', '11456', '22546'],
-    labels: numOfAbsencesData?.labels?.map((label) => label.substring(0, 3)),
+    labels: numOfAbsencesData?.labels?.map((label) => label),
     datasets: [
       {
         // label: '# of Votes',
