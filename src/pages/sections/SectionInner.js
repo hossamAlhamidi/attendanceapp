@@ -398,7 +398,7 @@ const SectionInner = () => {
       <ModalTemplate
         isOpen={addStudentModal.isOpen}
         onClose={addStudentModal.onClose}
-        title={'Add Course'}
+        title={'Add Student'}
       >
         <form onSubmit={formik.handleSubmit}>
           <Box mx={'5px'}>
