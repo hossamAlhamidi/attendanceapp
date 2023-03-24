@@ -26,8 +26,8 @@ const Login = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const initialValues = {
-    instructor_id: '',
-    password: '',
+    instructor_id: '439',
+    password: '123',
   };
   const validationSchema = Yup.object({
     instructor_id: Yup.string().required(),
