@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { MOST_INSTRUCTORS,MOST_SECTIONS,MOST_COURSES,NUMBER_ABSENCES,TOTAL_COUNT } from "../queryKeys";
 import { getMostInstructors,getMostSections,getMostCourses,getNumberAbsences,getTotalCount} from "../api/dashboard";
 
